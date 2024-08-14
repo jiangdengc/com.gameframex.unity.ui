@@ -1,0 +1,19 @@
+{
+    "name": "GameFrameX.UI.Runtime",
+    "rootNamespace": "GameFrameX.UI.Runtime",
+    "references": [
+        "GameFrameX.Runtime",
+        "GameFrameX.Asset.Runtime",
+        "YooAsset.Runtime",
+        "UniTask.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
