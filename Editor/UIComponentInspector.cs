@@ -107,6 +107,12 @@ namespace GameFrameX.UI.Editor
                 EditorGUILayout.PropertyField(m_InstanceRoot);
                 m_UIFormHelperInfo.Draw();
                 m_UIGroupHelperInfo.Draw();
+                if (m_UIGroups.arraySize <= 0)
+                {
+                    EditorGUILayout.HelpBox("必须要设置至少一个UIGroup", MessageType.Error);
+                }
+
+                EditorGUILayout.HelpBox("强烈推荐不要设置为同一个Depth(深度)", MessageType.Info);
                 EditorGUILayout.PropertyField(m_UIGroups, true);
             }
             EditorGUI.EndDisabledGroup();
