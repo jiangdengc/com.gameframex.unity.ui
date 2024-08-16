@@ -95,14 +95,14 @@ namespace GameFrameX.UI.Runtime
             set { m_InstancePool.ExpireTime = value; }
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 获取或设置界面实例对象池的优先级。
         /// </summary>
         public int InstancePriority
         {
             get { return m_InstancePool.Priority; }
             set { m_InstancePool.Priority = value; }
-        }
+        }*/
 
         /// <summary>
         /// 打开界面成功事件。

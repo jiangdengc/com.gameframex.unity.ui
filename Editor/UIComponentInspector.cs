@@ -24,7 +24,7 @@ namespace GameFrameX.UI.Editor
         private SerializedProperty m_InstanceAutoReleaseInterval = null;
         private SerializedProperty m_InstanceCapacity = null;
         private SerializedProperty m_InstanceExpireTime = null;
-        private SerializedProperty m_InstancePriority = null;
+        // private SerializedProperty m_InstancePriority = null;
         private SerializedProperty m_InstanceRoot = null;
         private SerializedProperty m_UIGroups = null;
 
@@ -88,6 +88,7 @@ namespace GameFrameX.UI.Editor
                 }
             }
 
+            /*
             int instancePriority = EditorGUILayout.DelayedIntField("Instance Priority", m_InstancePriority.intValue);
             if (instancePriority != m_InstancePriority.intValue)
             {
@@ -99,7 +100,7 @@ namespace GameFrameX.UI.Editor
                 {
                     m_InstancePriority.intValue = instancePriority;
                 }
-            }
+            }*/
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
@@ -144,7 +145,7 @@ namespace GameFrameX.UI.Editor
             m_InstanceAutoReleaseInterval = serializedObject.FindProperty("m_InstanceAutoReleaseInterval");
             m_InstanceCapacity = serializedObject.FindProperty("m_InstanceCapacity");
             m_InstanceExpireTime = serializedObject.FindProperty("m_InstanceExpireTime");
-            m_InstancePriority = serializedObject.FindProperty("m_InstancePriority");
+            // m_InstancePriority = serializedObject.FindProperty("m_InstancePriority");
             m_InstanceRoot = serializedObject.FindProperty("m_InstanceRoot");
             m_UIGroups = serializedObject.FindProperty("m_UIGroups");
 

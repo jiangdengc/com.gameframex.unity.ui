@@ -46,7 +46,7 @@ namespace GameFrameX.UI.Runtime
 
         [SerializeField] private float m_InstanceExpireTime = 60f;
 
-        [SerializeField] private int m_InstancePriority = 0;
+        // [SerializeField] private int m_InstancePriority = 0;
 
         [SerializeField] private Transform m_InstanceRoot = null;
 
@@ -95,6 +95,7 @@ namespace GameFrameX.UI.Runtime
             set { m_UIManager.InstanceExpireTime = m_InstanceExpireTime = value; }
         }
 
+        /*
         /// <summary>
         /// 获取或设置界面实例对象池的优先级。
         /// </summary>
@@ -102,7 +103,7 @@ namespace GameFrameX.UI.Runtime
         {
             get { return m_UIManager.InstancePriority; }
             set { m_UIManager.InstancePriority = m_InstancePriority = value; }
-        }
+        }*/
 
         /// <summary>
         /// 游戏框架组件初始化。
@@ -165,7 +166,7 @@ namespace GameFrameX.UI.Runtime
             m_UIManager.InstanceAutoReleaseInterval = m_InstanceAutoReleaseInterval;
             m_UIManager.InstanceCapacity = m_InstanceCapacity;
             m_UIManager.InstanceExpireTime = m_InstanceExpireTime;
-            m_UIManager.InstancePriority = m_InstancePriority;
+            // m_UIManager.InstancePriority = m_InstancePriority;
 
             UIFormHelperBase uiFormHelper = Helper.CreateHelper(m_UIFormHelperTypeName, m_CustomUIFormHelper);
             if (uiFormHelper == null)
