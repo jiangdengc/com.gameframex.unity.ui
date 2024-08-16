@@ -200,9 +200,6 @@ namespace GameFrameX.UI.Runtime
         /// 设置界面的可见性。
         /// </summary>
         /// <param name="visible">界面的可见性。</param>
-        protected virtual void InternalSetVisible(bool visible)
-        {
-            gameObject.SetActive(visible);
-        }
+        protected abstract void InternalSetVisible(bool visible);
     }
 }
