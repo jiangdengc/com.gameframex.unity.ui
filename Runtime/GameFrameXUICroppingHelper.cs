@@ -21,10 +21,10 @@ namespace GameFrameX.UI.Runtime
             _ = typeof(DefaultUIGroupHelper);
             _ = typeof(DefaultUIFormHelper);
             _ = typeof(CloseUIFormCompleteEventArgs);
-            _ = typeof(OpenUIFormDependencyAssetEventArgs);
+            // _ = typeof(OpenUIFormDependencyAssetEventArgs);
             _ = typeof(OpenUIFormFailureEventArgs);
             _ = typeof(OpenUIFormSuccessEventArgs);
-            _ = typeof(OpenUIFormUpdateEventArgs);
+            // _ = typeof(OpenUIFormUpdateEventArgs);
         }
     }
 }

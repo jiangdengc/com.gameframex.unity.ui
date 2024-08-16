@@ -33,8 +33,8 @@ namespace GameFrameX.UI.Runtime
         private bool m_IsShutdown;
         private EventHandler<OpenUIFormSuccessEventArgs> m_OpenUIFormSuccessEventHandler;
         private EventHandler<OpenUIFormFailureEventArgs> m_OpenUIFormFailureEventHandler;
-        private EventHandler<OpenUIFormUpdateEventArgs> m_OpenUIFormUpdateEventHandler;
-        private EventHandler<OpenUIFormDependencyAssetEventArgs> m_OpenUIFormDependencyAssetEventHandler;
+        // private EventHandler<OpenUIFormUpdateEventArgs> m_OpenUIFormUpdateEventHandler;
+        // private EventHandler<OpenUIFormDependencyAssetEventArgs> m_OpenUIFormDependencyAssetEventHandler;
         private EventHandler<CloseUIFormCompleteEventArgs> m_CloseUIFormCompleteEventHandler;
 
         /// <summary>
@@ -55,8 +55,8 @@ namespace GameFrameX.UI.Runtime
             m_IsShutdown = false;
             m_OpenUIFormSuccessEventHandler = null;
             m_OpenUIFormFailureEventHandler = null;
-            m_OpenUIFormUpdateEventHandler = null;
-            m_OpenUIFormDependencyAssetEventHandler = null;
+            // m_OpenUIFormUpdateEventHandler = null;
+            // m_OpenUIFormDependencyAssetEventHandler = null;
             m_CloseUIFormCompleteEventHandler = null;
         }
 
@@ -122,6 +122,7 @@ namespace GameFrameX.UI.Runtime
             remove { m_OpenUIFormFailureEventHandler -= value; }
         }
 
+        /*
         /// <summary>
         /// 打开界面更新事件。
         /// </summary>
@@ -138,7 +139,7 @@ namespace GameFrameX.UI.Runtime
         {
             add { m_OpenUIFormDependencyAssetEventHandler += value; }
             remove { m_OpenUIFormDependencyAssetEventHandler -= value; }
-        }
+        }*/
 
         /// <summary>
         /// 关闭界面完成事件。
@@ -837,6 +838,7 @@ namespace GameFrameX.UI.Runtime
             throw new GameFrameworkException(appendErrorMessage);
         }
 
+        /*
         private void LoadAssetUpdateCallback(string uiFormAssetName, float progress, object userData)
         {
             OpenUIFormInfo openUIFormInfo = (OpenUIFormInfo)userData;
@@ -867,6 +869,6 @@ namespace GameFrameX.UI.Runtime
                 m_OpenUIFormDependencyAssetEventHandler(this, openUIFormDependencyAssetEventArgs);
                 ReferencePool.Release(openUIFormDependencyAssetEventArgs);
             }
-        }
+        }*/
     }
 }

@@ -5,6 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameFrameX.Asset.Runtime;
@@ -33,9 +34,9 @@ namespace GameFrameX.UI.Runtime
 
         [SerializeField] private bool m_EnableOpenUIFormFailureEvent = true;
 
-        [SerializeField] private bool m_EnableOpenUIFormUpdateEvent = false;
-
-        [SerializeField] private bool m_EnableOpenUIFormDependencyAssetEvent = false;
+        // [SerializeField] private bool m_EnableOpenUIFormUpdateEvent = false;
+        //
+        // [SerializeField] private bool m_EnableOpenUIFormDependencyAssetEvent = false;
 
         [SerializeField] private bool m_EnableCloseUIFormCompleteEvent = true;
 
@@ -108,6 +109,8 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         protected override void Awake()
         {
+            ImplementationComponentType = Utility.Assembly.GetType(componentType);
+            InterfaceComponentType = typeof(IUIManager);
             base.Awake();
 
             m_UIManager = GameFrameworkEntry.GetModule<IUIManager>();
@@ -124,6 +127,7 @@ namespace GameFrameX.UI.Runtime
 
             m_UIManager.OpenUIFormFailure += OnOpenUIFormFailure;
 
+            /*
             if (m_EnableOpenUIFormUpdateEvent)
             {
                 m_UIManager.OpenUIFormUpdate += OnOpenUIFormUpdate;
@@ -132,7 +136,7 @@ namespace GameFrameX.UI.Runtime
             if (m_EnableOpenUIFormDependencyAssetEvent)
             {
                 m_UIManager.OpenUIFormDependencyAsset += OnOpenUIFormDependencyAsset;
-            }
+            }*/
 
             if (m_EnableCloseUIFormCompleteEvent)
             {
@@ -596,6 +600,7 @@ namespace GameFrameX.UI.Runtime
             }
         }
 
+        /*
         private void OnOpenUIFormUpdate(object sender, OpenUIFormUpdateEventArgs e)
         {
             m_EventComponent.Fire(this, e);
@@ -604,7 +609,7 @@ namespace GameFrameX.UI.Runtime
         private void OnOpenUIFormDependencyAsset(object sender, OpenUIFormDependencyAssetEventArgs e)
         {
             m_EventComponent.Fire(this, e);
-        }
+        }*/
 
         private void OnCloseUIFormComplete(object sender, CloseUIFormCompleteEventArgs e)
         {
