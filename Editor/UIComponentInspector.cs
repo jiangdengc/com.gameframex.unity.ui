@@ -103,6 +103,7 @@ namespace GameFrameX.UI.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
+                EditorGUILayout.HelpBox("如果使用UGUI.一定要设置为UGUI的根节点", MessageType.Warning);
                 EditorGUILayout.PropertyField(m_InstanceRoot);
                 m_UIFormHelperInfo.Draw();
                 m_UIGroupHelperInfo.Draw();
