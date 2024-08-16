@@ -21,7 +21,7 @@ namespace GameFrameX.UI.Runtime
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Game Framework/UI")]
-    public sealed partial class UIComponent : GameFrameworkComponent
+    public partial class UIComponent : GameFrameworkComponent
     {
         private const int DefaultPriority = 0;
 
@@ -168,6 +168,19 @@ namespace GameFrameX.UI.Runtime
             m_UIManager.InstanceExpireTime = m_InstanceExpireTime;
             // m_UIManager.InstancePriority = m_InstancePriority;
 
+            m_CustomUIGroupHelper = Helper.CreateHelper(m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
+            if (m_CustomUIGroupHelper == null)
+            {
+                Log.Error("Can not create UI Group helper.");
+                return;
+            }
+
+            m_CustomUIGroupHelper.name = "UI Group Helper";
+            Transform transform = m_CustomUIGroupHelper.transform;
+            transform.SetParent(this.transform);
+            transform.localScale = Vector3.one;
+
+
             UIFormHelperBase uiFormHelper = Helper.CreateHelper(m_UIFormHelperTypeName, m_CustomUIFormHelper);
             if (uiFormHelper == null)
             {
@@ -176,7 +189,7 @@ namespace GameFrameX.UI.Runtime
             }
 
             uiFormHelper.name = "UI Form Helper";
-            Transform transform = uiFormHelper.transform;
+            transform = uiFormHelper.transform;
             transform.SetParent(this.transform);
             transform.localScale = Vector3.one;
 
@@ -262,18 +275,26 @@ namespace GameFrameX.UI.Runtime
                 return false;
             }
 
-            UIGroupHelperBase uiGroupHelper = Helper.CreateHelper(m_UIGroupHelperTypeName, m_CustomUIGroupHelper, UIGroupCount);
+            UIGroupHelperBase uiGroupHelper = (UIGroupHelperBase)m_CustomUIGroupHelper.Handler(uiGroupName, m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
+
             if (uiGroupHelper == null)
             {
                 Log.Error("Can not create UI group helper.");
                 return false;
             }
+            // UIGroupHelperBase uiGroupHelper = Helper.CreateHelper(m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
+            // if (uiGroupHelper == null)
+            // {
+            //     Log.Error("Can not create UI group helper.");
+            //     return false;
+            // }
 
+            /*
             uiGroupHelper.name = Utility.Text.Format("UI Group - {0}", uiGroupName);
             uiGroupHelper.gameObject.layer = LayerMask.NameToLayer("UI");
             Transform transform = uiGroupHelper.transform;
             transform.SetParent(m_InstanceRoot);
-            transform.localScale = Vector3.one;
+            transform.localScale = Vector3.one;*/
 
             return m_UIManager.AddUIGroup(uiGroupName, depth, uiGroupHelper);
         }

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace GameFrameX.UI.Runtime
 {
-    public sealed partial class UIComponent : GameFrameworkComponent
+    public partial class UIComponent : GameFrameworkComponent
     {
         [Serializable]
         private sealed class UIGroup
