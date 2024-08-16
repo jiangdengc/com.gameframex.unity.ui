@@ -18,7 +18,6 @@ namespace GameFrameX.UI.Runtime
             _ = typeof(UIFormLogic);
             _ = typeof(UIFormHelperBase);
             _ = typeof(UIForm);
-            _ = typeof(DefaultUIGroupHelper);
             _ = typeof(DefaultUIFormHelper);
             _ = typeof(CloseUIFormCompleteEventArgs);
             // _ = typeof(OpenUIFormDependencyAssetEventArgs);
