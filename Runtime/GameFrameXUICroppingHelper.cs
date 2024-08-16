@@ -11,9 +11,20 @@ namespace GameFrameX.UI.Runtime
         {
             _ = typeof(IUIManager);
             _ = typeof(UIManager);
-            _ = typeof(UI);
+            _ = typeof(UIStringKey);
             _ = typeof(UIComponent);
-            _ = typeof(UILayer);
+            _ = typeof(UIIntKey);
+            _ = typeof(UIGroupHelperBase);
+            _ = typeof(UIFormLogic);
+            _ = typeof(UIFormHelperBase);
+            _ = typeof(UIForm);
+            _ = typeof(DefaultUIGroupHelper);
+            _ = typeof(DefaultUIFormHelper);
+            _ = typeof(CloseUIFormCompleteEventArgs);
+            _ = typeof(OpenUIFormDependencyAssetEventArgs);
+            _ = typeof(OpenUIFormFailureEventArgs);
+            _ = typeof(OpenUIFormSuccessEventArgs);
+            _ = typeof(OpenUIFormUpdateEventArgs);
         }
     }
 }

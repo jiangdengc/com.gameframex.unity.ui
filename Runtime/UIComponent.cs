@@ -1,51 +1,115 @@
-using System;
+﻿//------------------------------------------------------------
+// Game Framework
+// Copyright © 2013-2021 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
+//------------------------------------------------------------
+
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using GameFrameX.Asset.Runtime;
-using UnityEngine;
+using GameFrameX.Event.Runtime;
+using GameFrameX.ObjectPool;
 using GameFrameX.Runtime;
+using UnityEngine;
 
 namespace GameFrameX.UI.Runtime
 {
     /// <summary>
-    /// UI组件
+    /// 界面组件。
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Game Framework/UI")]
-    public abstract class UIComponent : GameFrameworkComponent
+    public sealed partial class UIComponent : GameFrameworkComponent
     {
-        private IUIManager m_UIManager;
-        protected IAssetManager AssetManager;
-        protected UI Root;
-        protected UI HiddenRoot;
-        protected UI FloorRoot;
-        protected UI NormalRoot;
-        protected UI FixedRoot;
-        protected UI WindowRoot;
-        protected UI TipRoot;
-        protected UI BlackBoardRoot;
-        protected UI DialogueRoot;
-        protected UI GuideRoot;
-        protected UI LoadingRoot;
-        protected UI NotifyRoot;
-        protected UI SystemRoot;
-        private readonly Dictionary<UILayer, Dictionary<string, UI>> m_UILayerDictionary = new Dictionary<UILayer, Dictionary<string, UI>>(16);
+        private const int DefaultPriority = 0;
 
-        private void Start()
+        private IUIManager m_UIManager = null;
+        private EventComponent m_EventComponent = null;
+
+        private readonly List<IUIForm> m_InternalUIFormResults = new List<IUIForm>();
+
+        [SerializeField] private bool m_EnableOpenUIFormSuccessEvent = true;
+
+        [SerializeField] private bool m_EnableOpenUIFormFailureEvent = true;
+
+        [SerializeField] private bool m_EnableOpenUIFormUpdateEvent = false;
+
+        [SerializeField] private bool m_EnableOpenUIFormDependencyAssetEvent = false;
+
+        [SerializeField] private bool m_EnableCloseUIFormCompleteEvent = true;
+
+        [SerializeField] private float m_InstanceAutoReleaseInterval = 60f;
+
+        [SerializeField] private int m_InstanceCapacity = 16;
+
+        [SerializeField] private float m_InstanceExpireTime = 60f;
+
+        [SerializeField] private int m_InstancePriority = 0;
+
+        [SerializeField] private Transform m_InstanceRoot = null;
+
+        [SerializeField] private string m_UIFormHelperTypeName = "GameFrameX.UI.Runtime.DefaultUIFormHelper";
+
+        [SerializeField] private UIFormHelperBase m_CustomUIFormHelper = null;
+
+        [SerializeField] private string m_UIGroupHelperTypeName = "GameFrameX.UI.Runtime.DefaultUIGroupHelper";
+
+        [SerializeField] private UIGroupHelperBase m_CustomUIGroupHelper = null;
+
+        [SerializeField] private UIGroup[] m_UIGroups = null;
+
+        /// <summary>
+        /// 获取界面组数量。
+        /// </summary>
+        public int UIGroupCount
         {
-            AssetManager = GameFrameworkEntry.GetModule<IAssetManager>();
-            if (AssetManager == null)
-            {
-                Log.Fatal("Asset manager is invalid.");
-                return;
-            }
+            get { return m_UIManager.UIGroupCount; }
         }
 
+        /// <summary>
+        /// 获取或设置界面实例对象池自动释放可释放对象的间隔秒数。
+        /// </summary>
+        public float InstanceAutoReleaseInterval
+        {
+            get { return m_UIManager.InstanceAutoReleaseInterval; }
+            set { m_UIManager.InstanceAutoReleaseInterval = m_InstanceAutoReleaseInterval = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置界面实例对象池的容量。
+        /// </summary>
+        public int InstanceCapacity
+        {
+            get { return m_UIManager.InstanceCapacity; }
+            set { m_UIManager.InstanceCapacity = m_InstanceCapacity = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置界面实例对象池对象过期秒数。
+        /// </summary>
+        public float InstanceExpireTime
+        {
+            get { return m_UIManager.InstanceExpireTime; }
+            set { m_UIManager.InstanceExpireTime = m_InstanceExpireTime = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置界面实例对象池的优先级。
+        /// </summary>
+        public int InstancePriority
+        {
+            get { return m_UIManager.InstancePriority; }
+            set { m_UIManager.InstancePriority = m_InstancePriority = value; }
+        }
+
+        /// <summary>
+        /// 游戏框架组件初始化。
+        /// </summary>
         protected override void Awake()
         {
-            ImplementationComponentType = Type.GetType(componentType);
-            InterfaceComponentType = typeof(IUIManager);
             base.Awake();
+
             m_UIManager = GameFrameworkEntry.GetModule<IUIManager>();
             if (m_UIManager == null)
             {
@@ -53,402 +117,498 @@ namespace GameFrameX.UI.Runtime
                 return;
             }
 
-
-            Root = CreateRootNode();
-            GameFrameworkGuard.NotNull(Root, nameof(Root));
-            Root.Show();
-            HiddenRoot = CreateNode(Root, UILayer.Hidden);
-            FloorRoot = CreateNode(Root, UILayer.Floor);
-            NormalRoot = CreateNode(Root, UILayer.Normal);
-            FixedRoot = CreateNode(Root, UILayer.Fixed);
-            WindowRoot = CreateNode(Root, UILayer.Window);
-            TipRoot = CreateNode(Root, UILayer.Tip);
-            BlackBoardRoot = CreateNode(Root, UILayer.BlackBoard);
-            DialogueRoot = CreateNode(Root, UILayer.Dialogue);
-            GuideRoot = CreateNode(Root, UILayer.Guide);
-            LoadingRoot = CreateNode(Root, UILayer.Loading);
-            NotifyRoot = CreateNode(Root, UILayer.Notify);
-            SystemRoot = CreateNode(Root, UILayer.System);
-
-
-            m_UILayerDictionary[UILayer.Hidden] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Floor] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Normal] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Fixed] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Window] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Tip] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.BlackBoard] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Dialogue] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Guide] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Loading] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.Notify] = new Dictionary<string, UI>(64);
-            m_UILayerDictionary[UILayer.System] = new Dictionary<string, UI>(64);
-        }
-
-        /// <summary>
-        /// 创建根节点
-        /// </summary>
-        /// <returns></returns>
-        protected abstract UI CreateRootNode();
-
-        /// <summary>
-        /// 创建UI节点
-        /// </summary>
-        /// <param name="root">根节点</param>
-        /// <param name="layer">UI层级</param>
-        /// <returns></returns>
-        protected abstract UI CreateNode(object root, UILayer layer);
-
-        /// <summary>
-        /// 添加全屏UI对象
-        /// </summary>
-        /// <param name="creator">UI创建器</param>
-        /// <param name="descFilePath">UI目录</param>
-        /// <param name="layer">目标层级</param>
-        /// <param name="userData">用户自定义数据</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>返回创建后的UI对象</returns>
-        public T AddToFullScreen<T>(System.Func<object, T> creator, string descFilePath, UILayer layer, object userData = null) where T : UI
-        {
-            return Add<T>(creator, descFilePath, layer, true, userData);
-        }
-
-        /// <summary>
-        /// 异步添加UI 对象
-        /// </summary>
-        /// <param name="creator">UI创建器</param>
-        /// <param name="descFilePath">UI目录</param>
-        /// <param name="layer">目标层级</param>
-        /// <param name="isFullScreen">是否全屏</param>
-        /// <param name="userData">用户自定义数据</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>返回创建后的UI对象</returns>
-        public abstract UniTask<T> AddAsync<T>(System.Func<object, T> creator, string descFilePath, UILayer layer, bool isFullScreen = false, object userData = null) where T : UI;
-
-
-        /// <summary>
-        /// 添加UI对象
-        /// </summary>
-        /// <param name="creator">UI创建器</param>
-        /// <param name="descFilePath">UI目录</param>
-        /// <param name="layer">目标层级</param>
-        /// <param name="isFullScreen">是否全屏</param>
-        /// <param name="userData">用户自定义数据</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>返回创建后的UI对象</returns>
-        /// <exception cref="ArgumentNullException">创建器不存在,引发参数异常</exception>
-        public virtual T Add<T>(System.Func<object, T> creator, string descFilePath, UILayer layer, bool isFullScreen = false, object userData = null) where T : UI
-        {
-            GameFrameworkGuard.NotNull(creator, nameof(creator));
-            GameFrameworkGuard.NotNull(descFilePath, nameof(descFilePath));
-            var ui = creator(userData);
-            Add(ui, layer);
-            if (isFullScreen)
+            if (m_EnableOpenUIFormSuccessEvent)
             {
-                ui.MakeFullScreen();
+                m_UIManager.OpenUIFormSuccess += OnOpenUIFormSuccess;
             }
 
-            return ui;
+            m_UIManager.OpenUIFormFailure += OnOpenUIFormFailure;
+
+            if (m_EnableOpenUIFormUpdateEvent)
+            {
+                m_UIManager.OpenUIFormUpdate += OnOpenUIFormUpdate;
+            }
+
+            if (m_EnableOpenUIFormDependencyAssetEvent)
+            {
+                m_UIManager.OpenUIFormDependencyAsset += OnOpenUIFormDependencyAsset;
+            }
+
+            if (m_EnableCloseUIFormCompleteEvent)
+            {
+                m_UIManager.CloseUIFormComplete += OnCloseUIFormComplete;
+            }
         }
 
-
-        /// <summary>
-        /// 从UI管理列表中删除所有的UI
-        /// </summary>
-        public void RemoveAll()
+        private void Start()
         {
-            var tempKv = new Dictionary<string, UI>(32);
-            foreach (var kv in m_UILayerDictionary)
+            BaseComponent baseComponent = GameEntry.GetComponent<BaseComponent>();
+            if (baseComponent == null)
             {
-                tempKv.Clear();
-                foreach (var fui in kv.Value)
+                Log.Fatal("Base component is invalid.");
+                return;
+            }
+
+            m_EventComponent = GameEntry.GetComponent<EventComponent>();
+            if (m_EventComponent == null)
+            {
+                Log.Fatal("Event component is invalid.");
+                return;
+            }
+
+            m_UIManager.SetResourceManager(GameFrameworkEntry.GetModule<IAssetManager>());
+            m_UIManager.SetObjectPoolManager(GameFrameworkEntry.GetModule<IObjectPoolManager>());
+            m_UIManager.InstanceAutoReleaseInterval = m_InstanceAutoReleaseInterval;
+            m_UIManager.InstanceCapacity = m_InstanceCapacity;
+            m_UIManager.InstanceExpireTime = m_InstanceExpireTime;
+            m_UIManager.InstancePriority = m_InstancePriority;
+
+            UIFormHelperBase uiFormHelper = Helper.CreateHelper(m_UIFormHelperTypeName, m_CustomUIFormHelper);
+            if (uiFormHelper == null)
+            {
+                Log.Error("Can not create UI form helper.");
+                return;
+            }
+
+            uiFormHelper.name = "UI Form Helper";
+            Transform transform = uiFormHelper.transform;
+            transform.SetParent(this.transform);
+            transform.localScale = Vector3.one;
+
+            m_UIManager.SetUIFormHelper(uiFormHelper);
+
+            if (m_InstanceRoot == null)
+            {
+                m_InstanceRoot = new GameObject("UI Form Instances").transform;
+                m_InstanceRoot.SetParent(gameObject.transform);
+                m_InstanceRoot.localScale = Vector3.one;
+            }
+
+            m_InstanceRoot.gameObject.layer = LayerMask.NameToLayer("UI");
+
+            for (int i = 0; i < m_UIGroups.Length; i++)
+            {
+                if (!AddUIGroup(m_UIGroups[i].Name, m_UIGroups[i].Depth))
                 {
-                    tempKv[fui.Key] = fui.Value;
-                }
-
-                foreach (var fui in tempKv)
-                {
-                    Remove(fui.Key);
-                    fui.Value.Dispose();
-                }
-
-                kv.Value.Clear();
-            }
-
-            tempKv.Clear();
-            m_UILayerDictionary.Clear();
-        }
-
-        protected UI Add(UI ui, UILayer layer)
-        {
-            GameFrameworkGuard.NotNull(ui, nameof(ui));
-            if (m_UILayerDictionary[layer].ContainsKey(ui.Name))
-            {
-                return m_UILayerDictionary[layer][ui.Name];
-            }
-
-            m_UILayerDictionary[layer][ui.Name] = ui;
-            switch (layer)
-            {
-                case UILayer.Hidden:
-                    HiddenRoot.Add(ui);
-                    break;
-                case UILayer.Floor:
-                    FloorRoot.Add(ui);
-                    break;
-                case UILayer.Normal:
-                    NormalRoot.Add(ui);
-                    break;
-                case UILayer.Fixed:
-                    FixedRoot.Add(ui);
-                    break;
-                case UILayer.Window:
-                    WindowRoot.Add(ui);
-                    break;
-                case UILayer.Tip:
-                    TipRoot.Add(ui);
-                    break;
-                case UILayer.BlackBoard:
-                    BlackBoardRoot.Add(ui);
-                    break;
-                case UILayer.Dialogue:
-                    DialogueRoot.Add(ui);
-                    break;
-                case UILayer.Guide:
-                    GuideRoot.Add(ui);
-                    break;
-                case UILayer.Loading:
-                    LoadingRoot.Add(ui);
-                    break;
-                case UILayer.Notify:
-                    NotifyRoot.Add(ui);
-                    break;
-                case UILayer.System:
-                    SystemRoot.Add(ui);
-                    break;
-            }
-
-            return ui;
-        }
-
-        /// <summary>
-        /// 根据UI名称从UI管理列表中移除
-        /// </summary>
-        /// <param name="uiName"></param>
-        /// <returns></returns>
-        public bool Remove(string uiName)
-        {
-            GameFrameworkGuard.NotNullOrEmpty(uiName, nameof(uiName));
-            if (SystemRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.System].Remove(uiName);
-
-                return true;
-            }
-
-            if (NotifyRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Notify].Remove(uiName);
-                return true;
-            }
-
-            if (HiddenRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Hidden].Remove(uiName);
-                return true;
-            }
-
-            if (FloorRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Floor].Remove(uiName);
-                return true;
-            }
-
-            if (NormalRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Normal].Remove(uiName);
-                return true;
-            }
-
-            if (FixedRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Fixed].Remove(uiName);
-                return true;
-            }
-
-            if (WindowRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Window].Remove(uiName);
-                return true;
-            }
-
-            if (TipRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Tip].Remove(uiName);
-                return true;
-            }
-
-            if (BlackBoardRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.BlackBoard].Remove(uiName);
-                return true;
-            }
-
-            if (DialogueRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Dialogue].Remove(uiName);
-                return true;
-            }
-
-            if (GuideRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Guide].Remove(uiName);
-                return true;
-            }
-
-            if (LoadingRoot.Remove(uiName))
-            {
-                m_UILayerDictionary[UILayer.Loading].Remove(uiName);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 根据UI名称和层级从UI管理列表中移除
-        /// </summary>
-        /// <param name="uiName">UI名称</param>
-        /// <param name="layer">层级</param>
-        /// <returns></returns>
-        public void Remove(string uiName, UILayer layer)
-        {
-            GameFrameworkGuard.NotNullOrEmpty(uiName, nameof(uiName));
-            switch (layer)
-            {
-                case UILayer.Hidden:
-                    HiddenRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Hidden].Remove(uiName);
-                    break;
-                case UILayer.Floor:
-                    FloorRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Floor].Remove(uiName);
-                    break;
-                case UILayer.Normal:
-                    NormalRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Normal].Remove(uiName);
-                    break;
-                case UILayer.Fixed:
-                    FixedRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Fixed].Remove(uiName);
-                    break;
-                case UILayer.Window:
-                    WindowRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Window].Remove(uiName);
-                    break;
-                case UILayer.Tip:
-                    TipRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Tip].Remove(uiName);
-                    break;
-                case UILayer.BlackBoard:
-                    BlackBoardRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.BlackBoard].Remove(uiName);
-                    break;
-                case UILayer.Dialogue:
-                    DialogueRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Dialogue].Remove(uiName);
-                    break;
-                case UILayer.Guide:
-                    GuideRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Guide].Remove(uiName);
-                    break;
-                case UILayer.Loading:
-                    LoadingRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Loading].Remove(uiName);
-                    break;
-                case UILayer.Notify:
-                    NotifyRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.Notify].Remove(uiName);
-                    break;
-                case UILayer.System:
-                    SystemRoot.Remove(uiName);
-                    m_UILayerDictionary[UILayer.System].Remove(uiName);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 判断UI名称是否在UI管理列表
-        /// </summary>
-        /// <param name="uiName">UI名称</param>
-        /// <returns></returns>
-        public bool Has(string uiName)
-        {
-            GameFrameworkGuard.NotNullOrEmpty(uiName, nameof(uiName));
-            return Get(uiName) != null;
-        }
-
-        /// <summary>
-        /// 判断UI是否在UI管理列表，如果存在则返回对象，不存在返回空值
-        /// </summary>
-        /// <param name="uiName">UI名称</param>
-        /// <param name="fui"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public bool Has<T>(string uiName, out T fui) where T : UI
-        {
-            GameFrameworkGuard.NotNullOrEmpty(uiName, nameof(uiName));
-            var ui = Get(uiName);
-            fui = ui as T;
-            return fui != null;
-        }
-
-        /// <summary>
-        /// 根据UI名称获取UI对象
-        /// </summary>
-        /// <param name="uiName">UI名称</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public T Get<T>(string uiName) where T : UI
-        {
-            T fui = default;
-            GameFrameworkGuard.NotNullOrEmpty(uiName, nameof(uiName));
-            foreach (var kv in m_UILayerDictionary)
-            {
-                if (kv.Value.TryGetValue(uiName, out var ui))
-                {
-                    fui = ui as T;
-                    break;
+                    Log.Warning("Add UI group '{0}' failure.", m_UIGroups[i].Name);
+                    continue;
                 }
             }
-
-            return fui;
         }
 
         /// <summary>
-        /// 根据UI名称获取UI对象
+        /// 是否存在界面组。
         /// </summary>
-        /// <param name="uiName"></param>
-        /// <returns></returns>
-        public UI Get(string uiName)
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <returns>是否存在界面组。</returns>
+        public bool HasUIGroup(string uiGroupName)
         {
-            GameFrameworkGuard.NotNullOrEmpty(uiName, nameof(uiName));
-            foreach (var kv in m_UILayerDictionary)
-            {
-                if (kv.Value.TryGetValue(uiName, out var ui))
-                {
-                    return ui;
-                }
-            }
-
-            return null;
+            return m_UIManager.HasUIGroup(uiGroupName);
         }
 
-        protected virtual void OnDestroy()
+        /// <summary>
+        /// 获取界面组。
+        /// </summary>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <returns>要获取的界面组。</returns>
+        public IUIGroup GetUIGroup(string uiGroupName)
         {
-            RemoveAll();
-            Root?.Dispose();
-            Root = null;
+            return m_UIManager.GetUIGroup(uiGroupName);
+        }
+
+        /// <summary>
+        /// 获取所有界面组。
+        /// </summary>
+        /// <returns>所有界面组。</returns>
+        public IUIGroup[] GetAllUIGroups()
+        {
+            return m_UIManager.GetAllUIGroups();
+        }
+
+        /// <summary>
+        /// 获取所有界面组。
+        /// </summary>
+        /// <param name="results">所有界面组。</param>
+        public void GetAllUIGroups(List<IUIGroup> results)
+        {
+            m_UIManager.GetAllUIGroups(results);
+        }
+
+        /// <summary>
+        /// 增加界面组。
+        /// </summary>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <returns>是否增加界面组成功。</returns>
+        public bool AddUIGroup(string uiGroupName)
+        {
+            return AddUIGroup(uiGroupName, 0);
+        }
+
+        /// <summary>
+        /// 增加界面组。
+        /// </summary>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <param name="depth">界面组深度。</param>
+        /// <returns>是否增加界面组成功。</returns>
+        public bool AddUIGroup(string uiGroupName, int depth)
+        {
+            if (m_UIManager.HasUIGroup(uiGroupName))
+            {
+                return false;
+            }
+
+            UIGroupHelperBase uiGroupHelper = Helper.CreateHelper(m_UIGroupHelperTypeName, m_CustomUIGroupHelper, UIGroupCount);
+            if (uiGroupHelper == null)
+            {
+                Log.Error("Can not create UI group helper.");
+                return false;
+            }
+
+            uiGroupHelper.name = Utility.Text.Format("UI Group - {0}", uiGroupName);
+            uiGroupHelper.gameObject.layer = LayerMask.NameToLayer("UI");
+            Transform transform = uiGroupHelper.transform;
+            transform.SetParent(m_InstanceRoot);
+            transform.localScale = Vector3.one;
+
+            return m_UIManager.AddUIGroup(uiGroupName, depth, uiGroupHelper);
+        }
+
+        /// <summary>
+        /// 是否存在界面。
+        /// </summary>
+        /// <param name="serialId">界面序列编号。</param>
+        /// <returns>是否存在界面。</returns>
+        public bool HasUIForm(int serialId)
+        {
+            return m_UIManager.HasUIForm(serialId);
+        }
+
+        /// <summary>
+        /// 是否存在界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <returns>是否存在界面。</returns>
+        public bool HasUIForm(string uiFormAssetName)
+        {
+            return m_UIManager.HasUIForm(uiFormAssetName);
+        }
+
+        /// <summary>
+        /// 获取界面。
+        /// </summary>
+        /// <param name="serialId">界面序列编号。</param>
+        /// <returns>要获取的界面。</returns>
+        public UIForm GetUIForm(int serialId)
+        {
+            return (UIForm)m_UIManager.GetUIForm(serialId);
+        }
+
+        /// <summary>
+        /// 获取界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <returns>要获取的界面。</returns>
+        public UIForm GetUIForm(string uiFormAssetName)
+        {
+            return (UIForm)m_UIManager.GetUIForm(uiFormAssetName);
+        }
+
+        /// <summary>
+        /// 获取界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <returns>要获取的界面。</returns>
+        public UIForm[] GetUIForms(string uiFormAssetName)
+        {
+            IUIForm[] uiForms = m_UIManager.GetUIForms(uiFormAssetName);
+            UIForm[] uiFormImpls = new UIForm[uiForms.Length];
+            for (int i = 0; i < uiForms.Length; i++)
+            {
+                uiFormImpls[i] = (UIForm)uiForms[i];
+            }
+
+            return uiFormImpls;
+        }
+
+        /// <summary>
+        /// 获取界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="results">要获取的界面。</param>
+        public void GetUIForms(string uiFormAssetName, List<UIForm> results)
+        {
+            if (results == null)
+            {
+                Log.Error("Results is invalid.");
+                return;
+            }
+
+            results.Clear();
+            m_UIManager.GetUIForms(uiFormAssetName, m_InternalUIFormResults);
+            foreach (IUIForm uiForm in m_InternalUIFormResults)
+            {
+                results.Add((UIForm)uiForm);
+            }
+        }
+
+        /// <summary>
+        /// 获取所有已加载的界面。
+        /// </summary>
+        /// <returns>所有已加载的界面。</returns>
+        public UIForm[] GetAllLoadedUIForms()
+        {
+            IUIForm[] uiForms = m_UIManager.GetAllLoadedUIForms();
+            UIForm[] uiFormImpls = new UIForm[uiForms.Length];
+            for (int i = 0; i < uiForms.Length; i++)
+            {
+                uiFormImpls[i] = (UIForm)uiForms[i];
+            }
+
+            return uiFormImpls;
+        }
+
+        /// <summary>
+        /// 获取所有已加载的界面。
+        /// </summary>
+        /// <param name="results">所有已加载的界面。</param>
+        public void GetAllLoadedUIForms(List<UIForm> results)
+        {
+            if (results == null)
+            {
+                Log.Error("Results is invalid.");
+                return;
+            }
+
+            results.Clear();
+            m_UIManager.GetAllLoadedUIForms(m_InternalUIFormResults);
+            foreach (IUIForm uiForm in m_InternalUIFormResults)
+            {
+                results.Add((UIForm)uiForm);
+            }
+        }
+
+        /// <summary>
+        /// 获取所有正在加载界面的序列编号。
+        /// </summary>
+        /// <returns>所有正在加载界面的序列编号。</returns>
+        public int[] GetAllLoadingUIFormSerialIds()
+        {
+            return m_UIManager.GetAllLoadingUIFormSerialIds();
+        }
+
+        /// <summary>
+        /// 获取所有正在加载界面的序列编号。
+        /// </summary>
+        /// <param name="results">所有正在加载界面的序列编号。</param>
+        public void GetAllLoadingUIFormSerialIds(List<int> results)
+        {
+            m_UIManager.GetAllLoadingUIFormSerialIds(results);
+        }
+
+        /// <summary>
+        /// 是否正在加载界面。
+        /// </summary>
+        /// <param name="serialId">界面序列编号。</param>
+        /// <returns>是否正在加载界面。</returns>
+        public bool IsLoadingUIForm(int serialId)
+        {
+            return m_UIManager.IsLoadingUIForm(serialId);
+        }
+
+        /// <summary>
+        /// 是否正在加载界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <returns>是否正在加载界面。</returns>
+        public bool IsLoadingUIForm(string uiFormAssetName)
+        {
+            return m_UIManager.IsLoadingUIForm(uiFormAssetName);
+        }
+
+        /// <summary>
+        /// 是否是合法的界面。
+        /// </summary>
+        /// <param name="uiForm">界面。</param>
+        /// <returns>界面是否合法。</returns>
+        public bool IsValidUIForm(UIForm uiForm)
+        {
+            return m_UIManager.IsValidUIForm(uiForm);
+        }
+
+        /// <summary>
+        /// 打开界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <returns>界面的序列编号。</returns>
+        public Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName)
+        {
+            return OpenUIForm(uiFormAssetName, uiGroupName, false, null);
+        }
+
+        /// <summary>
+        /// 打开界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
+        /// <returns>界面的序列编号。</returns>
+        public Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm)
+        {
+            return OpenUIForm(uiFormAssetName, uiGroupName, pauseCoveredUIForm, null);
+        }
+
+        /// <summary>
+        /// 打开界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        /// <returns>界面的序列编号。</returns>
+        public Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName, object userData)
+        {
+            return OpenUIForm(uiFormAssetName, uiGroupName, false, userData);
+        }
+
+
+        /// <summary>
+        /// 打开界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="uiGroupName">界面组名称。</param>
+        /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        /// <returns>界面的序列编号。</returns>
+        public async Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, object userData)
+        {
+            return await m_UIManager.OpenUIFormAsync(uiFormAssetName, uiGroupName, pauseCoveredUIForm, userData);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        public void CloseUIForm(int serialId)
+        {
+            m_UIManager.CloseUIForm(serialId);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        public void CloseUIForm(int serialId, object userData)
+        {
+            m_UIManager.CloseUIForm(serialId, userData);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="uiForm">要关闭的界面。</param>
+        public void CloseUIForm(UIForm uiForm)
+        {
+            m_UIManager.CloseUIForm(uiForm);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="uiForm">要关闭的界面。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        public void CloseUIForm(UIForm uiForm, object userData)
+        {
+            m_UIManager.CloseUIForm(uiForm, userData);
+        }
+
+        /// <summary>
+        /// 关闭所有已加载的界面。
+        /// </summary>
+        public void CloseAllLoadedUIForms()
+        {
+            m_UIManager.CloseAllLoadedUIForms();
+        }
+
+        /// <summary>
+        /// 关闭所有已加载的界面。
+        /// </summary>
+        /// <param name="userData">用户自定义数据。</param>
+        public void CloseAllLoadedUIForms(object userData)
+        {
+            m_UIManager.CloseAllLoadedUIForms(userData);
+        }
+
+        /// <summary>
+        /// 关闭所有正在加载的界面。
+        /// </summary>
+        public void CloseAllLoadingUIForms()
+        {
+            m_UIManager.CloseAllLoadingUIForms();
+        }
+
+        /// <summary>
+        /// 激活界面。
+        /// </summary>
+        /// <param name="uiForm">要激活的界面。</param>
+        public void RefocusUIForm(UIForm uiForm)
+        {
+            m_UIManager.RefocusUIForm(uiForm);
+        }
+
+        /// <summary>
+        /// 激活界面。
+        /// </summary>
+        /// <param name="uiForm">要激活的界面。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        public void RefocusUIForm(UIForm uiForm, object userData)
+        {
+            m_UIManager.RefocusUIForm(uiForm, userData);
+        }
+
+        /// <summary>
+        /// 设置界面是否被加锁。
+        /// </summary>
+        /// <param name="uiForm">要设置是否被加锁的界面。</param>
+        /// <param name="locked">界面是否被加锁。</param>
+        public void SetUIFormInstanceLocked(UIForm uiForm, bool locked)
+        {
+            if (uiForm == null)
+            {
+                Log.Warning("UI form is invalid.");
+                return;
+            }
+
+            m_UIManager.SetUIFormInstanceLocked(uiForm.gameObject, locked);
+        }
+
+        private void OnOpenUIFormSuccess(object sender, OpenUIFormSuccessEventArgs e)
+        {
+            m_EventComponent.Fire(this, e);
+        }
+
+        private void OnOpenUIFormFailure(object sender, OpenUIFormFailureEventArgs e)
+        {
+            Log.Warning("Open UI form failure, asset name '{0}', UI group name '{1}', pause covered UI form '{2}', error message '{3}'.", e.UIFormAssetName, e.UIGroupName, e.PauseCoveredUIForm, e.ErrorMessage);
+            if (m_EnableOpenUIFormFailureEvent)
+            {
+                m_EventComponent.Fire(this, e);
+            }
+        }
+
+        private void OnOpenUIFormUpdate(object sender, OpenUIFormUpdateEventArgs e)
+        {
+            m_EventComponent.Fire(this, e);
+        }
+
+        private void OnOpenUIFormDependencyAsset(object sender, OpenUIFormDependencyAssetEventArgs e)
+        {
+            m_EventComponent.Fire(this, e);
+        }
+
+        private void OnCloseUIFormComplete(object sender, CloseUIFormCompleteEventArgs e)
+        {
+            m_EventComponent.Fire(this, e);
         }
     }
 }

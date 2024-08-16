@@ -1,4 +1,4 @@
-namespace GameFrameX.UI.Runtime
+/*namespace GameFrameX.UI.Runtime
 {
     /// <summary>
     /// UI层级
@@ -65,4 +65,4 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         System = -35,
     }
-}
+}*/

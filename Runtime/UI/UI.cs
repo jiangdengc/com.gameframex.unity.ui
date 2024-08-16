@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameFrameX.ObjectPool;
@@ -315,7 +315,7 @@ namespace GameFrameX.UI.Runtime
             /*if (!IsRoot)
             {
                 RemoveFromParent();
-            }*/
+            }#1#
 
             // 释放UI
             OnDispose();
@@ -323,7 +323,7 @@ namespace GameFrameX.UI.Runtime
             /*if (!IsRoot)
             {
                 GObject.DestroyObject();
-            }*/
+            }#1#
 
             Release(false);
             // isFromFGUIPool = false;
@@ -476,4 +476,4 @@ namespace GameFrameX.UI.Runtime
             return Children.Values.ToArray();
         }
     }
-}
+}*/
