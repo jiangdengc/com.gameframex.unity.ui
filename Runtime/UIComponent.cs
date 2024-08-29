@@ -289,7 +289,7 @@ namespace GameFrameX.UI.Runtime
                 return false;
             }
 
-            UIGroupHelperBase uiGroupHelper = (UIGroupHelperBase)m_CustomUIGroupHelper.Handler(uiGroupName, m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
+            UIGroupHelperBase uiGroupHelper = (UIGroupHelperBase)m_CustomUIGroupHelper.Handler(m_InstanceRoot, uiGroupName, m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
 
             if (uiGroupHelper == null)
             {
