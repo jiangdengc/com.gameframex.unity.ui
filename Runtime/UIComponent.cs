@@ -572,6 +572,16 @@ namespace GameFrameX.UI.Runtime
 
         /// <summary>
         /// 关闭界面。
+        /// 该函数只适用于界面只有一个的情况.因为当找到一个目标对象之后就会立即终止
+        /// </summary>
+        /// <typeparam name="T">关闭界面的类型</typeparam>
+        public void CloseUIForm<T>(object userData = null) where T : IUIForm
+        {
+            m_UIManager.CloseUIForm<T>(userData);
+        }
+
+        /// <summary>
+        /// 关闭界面。
         /// </summary>
         /// <param name="uiForm">要关闭的界面。</param>
         /// <param name="userData">用户自定义数据。</param>
