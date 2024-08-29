@@ -58,7 +58,21 @@ namespace GameFrameX.UI.Runtime
 
         [SerializeField] private UIGroupHelperBase m_CustomUIGroupHelper = null;
 
-        [SerializeField] private UIGroup[] m_UIGroups = null;
+        [SerializeField] private UIGroup[] m_UIGroups = new UIGroup[]
+        {
+            new UIGroup(UIGroupConstants.Hidden.Depth, UIGroupConstants.Hidden.Name),
+            new UIGroup(UIGroupConstants.Floor.Depth, UIGroupConstants.Floor.Name),
+            new UIGroup(UIGroupConstants.Normal.Depth, UIGroupConstants.Normal.Name),
+            new UIGroup(UIGroupConstants.Fixed.Depth, UIGroupConstants.Fixed.Name),
+            new UIGroup(UIGroupConstants.Window.Depth, UIGroupConstants.Window.Name),
+            new UIGroup(UIGroupConstants.Tip.Depth, UIGroupConstants.Tip.Name),
+            new UIGroup(UIGroupConstants.Guide.Depth, UIGroupConstants.Guide.Name),
+            new UIGroup(UIGroupConstants.BlackBoard.Depth, UIGroupConstants.BlackBoard.Name),
+            new UIGroup(UIGroupConstants.Dialogue.Depth, UIGroupConstants.Dialogue.Name),
+            new UIGroup(UIGroupConstants.Loading.Depth, UIGroupConstants.Loading.Name),
+            new UIGroup(UIGroupConstants.Notify.Depth, UIGroupConstants.Notify.Name),
+            new UIGroup(UIGroupConstants.System.Depth, UIGroupConstants.System.Name),
+        };
 
         /// <summary>
         /// 获取界面组数量。

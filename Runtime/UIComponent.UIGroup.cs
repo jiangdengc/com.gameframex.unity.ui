@@ -37,6 +37,12 @@ namespace GameFrameX.UI.Runtime
                     return m_Depth;
                 }
             }
+
+            public UIGroup(int depth, string name)
+            {
+                this.m_Depth = depth;
+                this.m_Name = name;
+            }
         }
     }
 }
