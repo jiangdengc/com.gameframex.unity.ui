@@ -478,50 +478,68 @@ namespace GameFrameX.UI.Runtime
         /// <summary>
         /// 打开界面。
         /// </summary>
+        /// <param name="uiFormAssetPath">界面所在路径</param>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName)
+        public Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName)
         {
-            return OpenUIForm(uiFormAssetName, uiGroupName, false, null);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, null);
         }
 
         /// <summary>
         /// 打开界面。
         /// </summary>
+        /// <param name="uiFormAssetPath">界面所在路径</param>
+        /// <param name="uiGroupName"></param>
+        /// <param name="userData"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null) where T : UIFormLogic
+        {
+            string uiFormAssetName = typeof(T).Name;
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, userData);
+        }
+
+        /// <summary>
+        /// 打开界面。
+        /// </summary>
+        /// <param name="uiFormAssetPath">界面所在路径</param>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm)
+        public Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm)
         {
-            return OpenUIForm(uiFormAssetName, uiGroupName, pauseCoveredUIForm, null);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, pauseCoveredUIForm, null);
         }
 
         /// <summary>
         /// 打开界面。
         /// </summary>
+        /// <param name="uiFormAssetPath">界面所在路径</param>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName, object userData)
+        public Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData)
         {
-            return OpenUIForm(uiFormAssetName, uiGroupName, false, userData);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, userData);
         }
 
 
         /// <summary>
         /// 打开界面。
         /// </summary>
+        /// <param name="uiFormAssetPath">界面所在路径</param>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>界面的序列编号。</returns>
-        public async Task<int> OpenUIForm(string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, object userData)
+        public async Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, object userData)
         {
-            return await m_UIManager.OpenUIFormAsync(uiFormAssetName, uiGroupName, pauseCoveredUIForm, userData);
+            return await m_UIManager.OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, pauseCoveredUIForm, userData);
         }
 
         /// <summary>
