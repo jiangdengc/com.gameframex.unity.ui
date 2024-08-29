@@ -255,7 +255,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>界面的序列编号。</returns>
-        Task<int> OpenUIFormAsync(string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, object userData);
+        Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, object userData);
 
 
         /// <summary>
