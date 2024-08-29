@@ -21,6 +21,14 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
+        /// 获取界面完整名称。
+        /// </summary>
+        string FullName
+        {
+            get;
+        }
+        
+        /// <summary>
         /// 获取界面资源名称。
         /// </summary>
         string UIFormAssetName
