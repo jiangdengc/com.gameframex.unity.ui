@@ -22,16 +22,22 @@ namespace GameFrameX.UI.Runtime
         private int m_DepthInUIGroup;
         private bool m_PauseCoveredUIForm;
         private UIFormLogic m_UIFormLogic;
+        private string m_FullName;
 
         /// <summary>
         /// 获取界面序列编号。
         /// </summary>
         public int SerialId
         {
-            get
-            {
-                return m_SerialId;
-            }
+            get { return m_SerialId; }
+        }
+
+        /// <summary>
+        /// 获取界面完整名称。
+        /// </summary>
+        public string FullName
+        {
+            get { return m_FullName; }
         }
 
         /// <summary>
@@ -39,10 +45,7 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public string UIFormAssetName
         {
-            get
-            {
-                return m_UIFormAssetName;
-            }
+            get { return m_UIFormAssetName; }
         }
 
         /// <summary>
@@ -50,10 +53,7 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public object Handle
         {
-            get
-            {
-                return gameObject;
-            }
+            get { return gameObject; }
         }
 
         /// <summary>
@@ -61,10 +61,7 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public IUIGroup UIGroup
         {
-            get
-            {
-                return m_UIGroup;
-            }
+            get { return m_UIGroup; }
         }
 
         /// <summary>
@@ -72,10 +69,7 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public int DepthInUIGroup
         {
-            get
-            {
-                return m_DepthInUIGroup;
-            }
+            get { return m_DepthInUIGroup; }
         }
 
         /// <summary>
@@ -83,10 +77,7 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public bool PauseCoveredUIForm
         {
-            get
-            {
-                return m_PauseCoveredUIForm;
-            }
+            get { return m_PauseCoveredUIForm; }
         }
 
         /// <summary>
@@ -94,10 +85,7 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public UIFormLogic Logic
         {
-            get
-            {
-                return m_UIFormLogic;
-            }
+            get { return m_UIFormLogic; }
         }
 
         /// <summary>
@@ -113,6 +101,7 @@ namespace GameFrameX.UI.Runtime
         {
             m_SerialId = serialId;
             m_UIFormAssetName = uiFormAssetName;
+            m_FullName = GetType().FullName;
             m_UIGroup = uiGroup;
             m_DepthInUIGroup = 0;
             m_PauseCoveredUIForm = pauseCoveredUIForm;
