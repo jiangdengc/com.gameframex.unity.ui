@@ -326,5 +326,17 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiFormInstance">要设置是否被加锁的界面实例。</param>
         /// <param name="locked">界面实例是否被加锁。</param>
         void SetUIFormInstanceLocked(object uiFormInstance, bool locked);
+
+        /// <summary>
+        /// 释放界面
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        void DisposeUIForm(int serialId);
+
+        /// <summary>
+        /// 释放界面
+        /// </summary>
+        /// <typeparam name="T">界面对象</typeparam>
+        void DisposeUIForm<T>() where T : IUIForm;
     }
 }

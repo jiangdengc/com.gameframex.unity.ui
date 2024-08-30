@@ -552,6 +552,25 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
+        /// 释放界面
+        /// </summary>
+        /// <param name="serialId"></param>
+        public void DisposeUIForm(int serialId)
+        {
+            m_UIManager.DisposeUIForm(serialId);
+        }
+
+        /// <summary>
+        /// 释放界面
+        /// 该函数只适用于界面只有一个的情况.因为当找到一个目标对象之后就会立即终止
+        /// </summary>
+        /// <typeparam name="T">界面类型</typeparam>
+        public void DisposeUIForm<T>() where T : IUIForm
+        {
+            m_UIManager.DisposeUIForm<T>();
+        }
+
+        /// <summary>
         /// 关闭界面。
         /// </summary>
         /// <param name="serialId">要关闭界面的序列编号。</param>
