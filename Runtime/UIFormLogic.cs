@@ -20,6 +20,8 @@ namespace GameFrameX.UI.Runtime
         private UIForm m_UIForm = null;
         private Transform m_CachedTransform = null;
         private int m_OriginalLayer = 0;
+        private UIEventSubscriber m_EventSubscriber = null;
+
 
         /// <summary>
         /// 获取界面。
@@ -28,6 +30,16 @@ namespace GameFrameX.UI.Runtime
         {
             get { return m_UIForm; }
         }
+
+        /// <summary>
+        /// 获取界面是否来自对象池。
+        /// </summary>
+        protected bool IsFromPool { get; set; }
+
+        /// <summary>
+        /// 获取界面是否已被销毁。
+        /// </summary>
+        protected bool IsDisposed { get; set; }
 
         /// <summary>
         /// 获取或设置界面名称。
@@ -46,10 +58,11 @@ namespace GameFrameX.UI.Runtime
             get { return m_Available; }
         }
 
+
         /// <summary>
         /// 获取或设置界面是否可见。
         /// </summary>
-        public bool Visible
+        public virtual bool Visible
         {
             get { return m_Available && m_Visible; }
             set
@@ -89,14 +102,30 @@ namespace GameFrameX.UI.Runtime
                 m_CachedTransform = transform;
             }
 
+            m_EventSubscriber = UIEventSubscriber.Create(this);
             m_UIForm = GetComponent<UIForm>();
             m_OriginalLayer = gameObject.layer;
+            InitView();
+        }
+
+        /// <summary>
+        /// 界面初始化。
+        /// </summary>
+        protected virtual void InitView()
+        {
         }
 
         /// <summary>
         /// 界面回收。
         /// </summary>
         protected internal virtual void OnRecycle()
+        {
+        }
+
+        /// <summary>
+        /// 销毁界面.
+        /// </summary>
+        public virtual void Dispose()
         {
         }
 
