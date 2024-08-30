@@ -97,7 +97,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
-        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, bool pauseCoveredUIForm, bool isNewInstance, object userData)
+        public void OnInit<T>(int serialId, string uiFormAssetName, IUIGroup uiGroup, bool pauseCoveredUIForm, bool isNewInstance, object userData) where T : UIFormLogic
         {
             m_SerialId = serialId;
             m_UIFormAssetName = uiFormAssetName;
@@ -111,7 +111,7 @@ namespace GameFrameX.UI.Runtime
                 return;
             }
 
-            m_UIFormLogic = GetComponent<UIFormLogic>();
+            m_UIFormLogic = gameObject.GetOrAddComponent<T>();
             if (m_UIFormLogic == null)
             {
                 Log.Error("UI form '{0}' can not get UI form logic.", uiFormAssetName);
