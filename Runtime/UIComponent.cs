@@ -495,10 +495,17 @@ namespace GameFrameX.UI.Runtime
         /// <param name="userData"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null) where T : UIFormLogic
+        public async Task<T> OpenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null) where T : UIFormLogic
         {
             string uiFormAssetName = typeof(T).Name;
-            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, userData);
+            var ui = await OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, userData);
+            if (ui != null)
+            {
+                var uiFormLogic = (ui.Handle as GameObject)?.GetComponent<T>();
+                return uiFormLogic;
+            }
+
+            return null;
         }
 
         /// <summary>
