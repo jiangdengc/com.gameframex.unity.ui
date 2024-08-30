@@ -183,5 +183,10 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         /// <param name="visible">界面的可见性。</param>
         protected abstract void InternalSetVisible(bool visible);
+
+        /// <summary>
+        /// 设置界面为全屏
+        /// </summary>
+        protected internal abstract void MakeFullScreen();
     }
 }
