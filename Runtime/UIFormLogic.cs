@@ -21,7 +21,15 @@ namespace GameFrameX.UI.Runtime
         private Transform m_CachedTransform = null;
         private int m_OriginalLayer = 0;
         private UIEventSubscriber m_EventSubscriber = null;
+        private object m_UserData = null;
 
+        /// <summary>
+        /// 获取用户自定义数据。
+        /// </summary>
+        public object UserData
+        {
+            get { return m_UserData; }
+        }
 
         /// <summary>
         /// 获取界面。
@@ -137,6 +145,7 @@ namespace GameFrameX.UI.Runtime
         {
             m_Available = true;
             Visible = true;
+            m_UserData = userData;
         }
 
         /// <summary>
