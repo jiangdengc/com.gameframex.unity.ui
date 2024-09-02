@@ -482,9 +482,9 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName)
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName) where T : UIFormLogic
         {
-            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, null);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), false, null);
         }
 
         /// <summary>
@@ -498,7 +498,7 @@ namespace GameFrameX.UI.Runtime
         public async Task<T> OpenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null) where T : UIFormLogic
         {
             string uiFormAssetName = typeof(T).Name;
-            var ui = await OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, userData);
+            var ui = await OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), false, userData);
             if (ui != null)
             {
                 var uiFormLogic = (ui.Handle as GameObject)?.GetComponent<T>();
@@ -516,9 +516,9 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm)
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm) where T : UIFormLogic
         {
-            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, pauseCoveredUIForm, null);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), pauseCoveredUIForm, null);
         }
 
         /// <summary>
@@ -529,9 +529,9 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData)
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData) where T : UIFormLogic
         {
-            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, false, userData);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), false, userData);
         }
 
 
@@ -541,12 +541,13 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiFormAssetPath">界面所在路径</param>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
+        /// <param name="uiFormType">界面逻辑类型。</param>
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>界面的序列编号。</returns>
-        public async Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, object userData)
+        public async Task<IUIForm> OpenUIFormAsync(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, Type uiFormType, bool pauseCoveredUIForm, object userData)
         {
-            return await m_UIManager.OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, pauseCoveredUIForm, userData);
+            return await m_UIManager.OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, uiFormType, pauseCoveredUIForm, userData);
         }
 
         /// <summary>
@@ -558,24 +559,6 @@ namespace GameFrameX.UI.Runtime
             m_UIManager.CloseUIForm(serialId);
         }
 
-        /// <summary>
-        /// 释放界面
-        /// </summary>
-        /// <param name="serialId"></param>
-        public void DisposeUIForm(int serialId)
-        {
-            m_UIManager.DisposeUIForm(serialId);
-        }
-
-        /// <summary>
-        /// 释放界面
-        /// 该函数只适用于界面只有一个的情况.因为当找到一个目标对象之后就会立即终止
-        /// </summary>
-        /// <typeparam name="T">界面类型</typeparam>
-        public void DisposeUIForm<T>() where T : IUIForm
-        {
-            m_UIManager.DisposeUIForm<T>();
-        }
 
         /// <summary>
         /// 关闭界面。
