@@ -7,6 +7,7 @@ namespace GameFrameX.UI.Runtime
     /// <summary>
     /// UI事件订阅器
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class UIEventSubscriber : IReference
     {
         private readonly GameFrameworkMultiDictionary<string, EventHandler<GameEventArgs>> m_DicEventHandler = new GameFrameworkMultiDictionary<string, EventHandler<GameEventArgs>>();

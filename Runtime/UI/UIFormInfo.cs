@@ -3,6 +3,7 @@
     /// <summary>
     /// 界面组界面信息。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class UIFormInfo : IReference
     {
         private IUIForm m_UIForm = null;

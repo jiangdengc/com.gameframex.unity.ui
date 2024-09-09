@@ -13,6 +13,7 @@ namespace GameFrameX.UI.Runtime
     /// <summary>
     /// 界面逻辑基类。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public abstract class UIFormLogic : MonoBehaviour, IUIFormLogic
     {
         private bool m_Available = false;

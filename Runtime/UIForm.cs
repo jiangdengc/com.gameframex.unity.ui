@@ -14,6 +14,7 @@ namespace GameFrameX.UI.Runtime
     /// <summary>
     /// 界面。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class UIForm : MonoBehaviour, IUIForm
     {
         private int m_SerialId;

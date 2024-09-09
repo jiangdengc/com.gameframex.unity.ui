@@ -5,6 +5,7 @@ namespace GameFrameX.UI.Runtime
     /// <summary>
     /// 界面组。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed partial class UIGroup : IUIGroup
     {
         private readonly string m_Name;

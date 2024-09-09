@@ -13,6 +13,7 @@ namespace GameFrameX.UI.Runtime
     /// <summary>
     /// 关闭界面完成事件。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class CloseUIFormCompleteEventArgs : GameEventArgs
     {
         /// <summary>

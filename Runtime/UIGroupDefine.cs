@@ -3,6 +3,7 @@
     /// <summary>
     /// 界面组
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class UIGroupDefine
     {
         /// <summary>
