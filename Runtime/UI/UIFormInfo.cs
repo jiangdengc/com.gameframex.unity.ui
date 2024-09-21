@@ -1,4 +1,6 @@
-﻿namespace GameFrameX.UI.Runtime
+﻿using GameFrameX.Runtime;
+
+namespace GameFrameX.UI.Runtime
 {
     /// <summary>
     /// 界面组界面信息。
