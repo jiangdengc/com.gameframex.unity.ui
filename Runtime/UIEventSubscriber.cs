@@ -57,6 +57,31 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
+        /// 触发事件
+        /// </summary>
+        /// <param name="id">消息ID</param>
+        /// <param name="e">消息对象</param>
+        public void Fire(string id, GameEventArgs e)
+        {
+            if (m_DicEventHandler.TryGetValue(id, out var handlers))
+            {
+                foreach (var eventHandler in handlers)
+                {
+                    try
+                    {
+                        eventHandler.Invoke(this, e);
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error(exception);
+                    }
+                }
+
+                GameEntry.GetComponent<EventComponent>().Fire(this, e);
+            }
+        }
+
+        /// <summary>
         /// 取消所有订阅
         /// </summary>
         public void UnSubscribeAll()

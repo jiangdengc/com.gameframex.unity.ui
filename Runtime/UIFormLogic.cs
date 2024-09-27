@@ -33,6 +33,14 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
+        /// 获取界面事件订阅器。
+        /// </summary>
+        public UIEventSubscriber EventSubscriber
+        {
+            get { return m_EventSubscriber; }
+        }
+
+        /// <summary>
         /// 获取界面。
         /// </summary>
         public UIForm UIForm
@@ -136,6 +144,11 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         public virtual void Dispose()
         {
+            if (IsDisposed)
+            {
+                return;
+            }
+            IsDisposed = true;
         }
 
         /// <summary>
