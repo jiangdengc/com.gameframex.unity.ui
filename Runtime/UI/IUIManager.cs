@@ -267,17 +267,37 @@ namespace GameFrameX.UI.Runtime
         void CloseUIForm(int serialId);
 
         /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        void CloseUIFormNow(int serialId);
+
+        /// <summary>
         /// 关闭界面。
         /// </summary>
         /// <param name="serialId">要关闭界面的序列编号。</param>
         /// <param name="userData">用户自定义数据。</param>
         void CloseUIForm(int serialId, object userData);
 
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        void CloseUIFormNow(int serialId, object userData);
+
         /// <summary>
         /// 关闭界面。
         /// </summary>
         /// <param name="uiForm">要关闭的界面。</param>
         void CloseUIForm(IUIForm uiForm);
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="uiForm">要关闭的界面。</param>
+        void CloseUIFormNow(IUIForm uiForm);
 
         /// <summary>
         /// 关闭界面。
@@ -287,11 +307,26 @@ namespace GameFrameX.UI.Runtime
         void CloseUIForm<T>(object userData) where T : IUIForm;
 
         /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="userData">用户自定义数据。</param>
+        /// <typeparam name="T"></typeparam>
+        void CloseUIFormNow<T>(object userData) where T : IUIForm;
+
+        /// <summary>
         /// 关闭界面。
         /// </summary>
         /// <param name="uiForm">要关闭的界面。</param>
         /// <param name="userData">用户自定义数据。</param>
         void CloseUIForm(IUIForm uiForm, object userData);
+
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="uiForm">要关闭的界面。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        void CloseUIFormNow(IUIForm uiForm, object userData);
 
         /// <summary>
         /// 关闭所有已加载的界面。

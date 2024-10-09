@@ -619,6 +619,54 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        public void CloseUIFormNow(int serialId)
+        {
+            m_UIManager.CloseUIFormNow(serialId);
+        }
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="serialId">要关闭界面的序列编号。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        public void CloseUIFormNow(int serialId, object userData)
+        {
+            m_UIManager.CloseUIFormNow(serialId, userData);
+        }
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="uiForm">要关闭的界面。</param>
+        public void CloseUIFormNow(UIForm uiForm)
+        {
+            m_UIManager.CloseUIFormNow(uiForm);
+        }
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// 该函数只适用于界面只有一个的情况.因为当找到一个目标对象之后就会立即终止
+        /// </summary>
+        /// <typeparam name="T">关闭界面的类型</typeparam>
+        public void CloseUIFormNow<T>(object userData = null) where T : IUIForm
+        {
+            m_UIManager.CloseUIFormNow<T>(userData);
+        }
+
+        /// <summary>
+        /// 立即关闭界面。
+        /// </summary>
+        /// <param name="uiForm">要关闭的界面。</param>
+        /// <param name="userData">用户自定义数据。</param>
+        public void CloseUIFormNow(UIForm uiForm, object userData)
+        {
+            m_UIManager.CloseUIFormNow(uiForm, userData);
+        }
+
+        /// <summary>
         /// 关闭所有已加载的界面。
         /// </summary>
         public void CloseAllLoadedUIForms()
