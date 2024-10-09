@@ -100,7 +100,8 @@ namespace GameFrameX.UI.Runtime
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
-        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<UIFormLogic> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData)
+        /// <param name="isFullScreen">是否全屏</param>
+        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<UIFormLogic> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
         {
             m_SerialId = serialId;
             m_UIFormAssetName = uiFormAssetName;
@@ -124,8 +125,12 @@ namespace GameFrameX.UI.Runtime
             try
             {
                 onInitAction?.Invoke(m_UIFormLogic);
-                
+
                 m_UIFormLogic.OnInit(userData);
+                if (isFullScreen)
+                {
+                    m_UIFormLogic.MakeFullScreen();
+                }
             }
             catch (Exception exception)
             {

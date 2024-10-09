@@ -11,6 +11,16 @@ namespace GameFrameX.UI.Runtime
         private object m_UserData = null;
         private Type m_FormType;
 
+        private bool m_IsFullScreen = false;
+
+        /// <summary>
+        /// 是否全屏
+        /// </summary>
+        public bool IsFullScreen
+        {
+            get { return m_IsFullScreen; }
+        }
+
         public Type FormType
         {
             get { return m_FormType; }
@@ -36,7 +46,7 @@ namespace GameFrameX.UI.Runtime
             get { return m_UserData; }
         }
 
-        public static OpenUIFormInfo Create(int serialId, UIGroup uiGroup, Type uiFormType, bool pauseCoveredUIForm, object userData)
+        public static OpenUIFormInfo Create(int serialId, UIGroup uiGroup, Type uiFormType, bool pauseCoveredUIForm, object userData, bool isFullScreen)
         {
             OpenUIFormInfo openUIFormInfo = ReferencePool.Acquire<OpenUIFormInfo>();
             openUIFormInfo.m_SerialId = serialId;
@@ -44,6 +54,7 @@ namespace GameFrameX.UI.Runtime
             openUIFormInfo.m_PauseCoveredUIForm = pauseCoveredUIForm;
             openUIFormInfo.m_UserData = userData;
             openUIFormInfo.m_FormType = uiFormType;
+            openUIFormInfo.m_IsFullScreen = isFullScreen;
             return openUIFormInfo;
         }
 
