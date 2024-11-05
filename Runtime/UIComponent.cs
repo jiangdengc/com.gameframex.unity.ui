@@ -503,6 +503,21 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
+        /// 打开界面。仅仅适用于类型和名称完全相同的情况
+        /// </summary>
+        /// <param name="uiGroupName">UI组名</param>
+        /// <param name="userData"></param>
+        /// <param name="isFullScreen"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<T> OpenUIFormAsync<T>(string uiGroupName, object userData = null, bool isFullScreen = false) where T : UIFormLogic
+        {
+            var uiFormAssetName = typeof(T).Name;
+            var uiFormAssetPath = Utility.Asset.Path.GetUIPath(uiFormAssetName);
+            return await OpenUIFormAsync<T>(uiFormAssetPath, uiGroupName, userData, isFullScreen);
+        }
+
+        /// <summary>
         /// 打开界面。
         /// </summary>
         /// <param name="uiFormAssetPath">界面所在路径</param>
