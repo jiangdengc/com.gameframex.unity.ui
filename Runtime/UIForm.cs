@@ -166,13 +166,12 @@ namespace GameFrameX.UI.Runtime
         /// <param name="serialId">界面序列编号。</param>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroup">界面所处的界面组。</param>
-        /// <param name="formType">界面逻辑类型。</param>
         /// <param name="onInitAction">初始化界面前的委托。</param>
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="isFullScreen">是否全屏</param>
-        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
+        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
         {
             if (m_IsInit)
             {
