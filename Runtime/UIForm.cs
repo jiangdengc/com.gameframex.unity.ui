@@ -15,15 +15,46 @@ namespace GameFrameX.UI.Runtime
     /// 界面。
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public sealed class UIForm : MonoBehaviour, IUIForm
+    public abstract class UIForm : MonoBehaviour, IUIForm
     {
+        private bool m_Available = false;
+        private bool m_Visible = false;
+        private bool m_IsInit = false;
         private int m_SerialId;
+        private int m_OriginalLayer = 0;
         private string m_UIFormAssetName;
         private IUIGroup m_UIGroup;
         private int m_DepthInUIGroup;
         private bool m_PauseCoveredUIForm;
-        private UIFormLogic m_UIFormLogic;
+        private UIEventSubscriber m_EventSubscriber = null;
+        private object m_UserData = null;
         private string m_FullName;
+
+        /// <summary>
+        /// 获取用户自定义数据。
+        /// </summary>
+        public object UserData
+        {
+            get { return m_UserData; }
+        }
+
+        /// <summary>
+        /// 获取界面事件订阅器。
+        /// </summary>
+        public UIEventSubscriber EventSubscriber
+        {
+            get { return m_EventSubscriber; }
+        }
+
+        /// <summary>
+        /// 获取界面是否来自对象池。
+        /// </summary>
+        protected bool IsFromPool { get; set; }
+
+        /// <summary>
+        /// 获取界面是否已被销毁。
+        /// </summary>
+        protected bool IsDisposed { get; set; }
 
         /// <summary>
         /// 获取界面序列编号。
@@ -39,6 +70,47 @@ namespace GameFrameX.UI.Runtime
         public string FullName
         {
             get { return m_FullName; }
+        }
+
+        /// <summary>
+        /// 获取或设置界面名称。
+        /// </summary>
+        public string Name
+        {
+            get { return gameObject.name; }
+            set { gameObject.name = value; }
+        }
+
+        /// <summary>
+        /// 获取界面是否可用。
+        /// </summary>
+        public bool Available
+        {
+            get { return m_Available; }
+        }
+
+        /// <summary>
+        /// 获取或设置界面是否可见。
+        /// </summary>
+        public virtual bool Visible
+        {
+            get { return m_Available && m_Visible; }
+            set
+            {
+                if (!m_Available)
+                {
+                    Log.Warning("UI form '{0}' is not available.", Name);
+                    return;
+                }
+
+                if (m_Visible == value)
+                {
+                    return;
+                }
+
+                m_Visible = value;
+                InternalSetVisible(value);
+            }
         }
 
         /// <summary>
@@ -82,11 +154,10 @@ namespace GameFrameX.UI.Runtime
         }
 
         /// <summary>
-        /// 获取界面逻辑。
+        /// 界面初始化。
         /// </summary>
-        public UIFormLogic Logic
+        protected virtual void InitView()
         {
-            get { return m_UIFormLogic; }
         }
 
         /// <summary>
@@ -101,57 +172,50 @@ namespace GameFrameX.UI.Runtime
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="isFullScreen">是否全屏</param>
-        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<UIFormLogic> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
+        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
         {
+            if (m_IsInit)
+            {
+                return;
+            }
+
+            m_UserData = userData;
             m_SerialId = serialId;
             m_UIFormAssetName = uiFormAssetName;
             m_FullName = GetType().FullName;
             m_UIGroup = uiGroup;
             m_DepthInUIGroup = 0;
             m_PauseCoveredUIForm = pauseCoveredUIForm;
-
+            m_OriginalLayer = gameObject.layer;
             if (!isNewInstance)
             {
                 return;
             }
 
-            m_UIFormLogic = (UIFormLogic)gameObject.GetOrAddComponent(formType);
-            if (m_UIFormLogic == null)
-            {
-                Log.Error("UI form '{0}' can not get UI form logic.", uiFormAssetName);
-                return;
-            }
+            m_EventSubscriber = UIEventSubscriber.Create(this);
 
             try
             {
-                onInitAction?.Invoke(m_UIFormLogic);
-
-                m_UIFormLogic.OnInit(userData);
+                onInitAction?.Invoke(this);
+                InitView();
                 if (isFullScreen)
                 {
-                    m_UIFormLogic.MakeFullScreen();
+                    MakeFullScreen();
                 }
             }
             catch (Exception exception)
             {
                 Log.Error("UI form '[{0}]{1}' OnInit with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
             }
+
+            m_IsInit = true;
         }
 
         /// <summary>
         /// 界面回收。
         /// </summary>
-        public void OnRecycle()
+        public virtual void OnRecycle()
         {
-            try
-            {
-                m_UIFormLogic.OnRecycle();
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnRecycle with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
-
             m_SerialId = 0;
             m_DepthInUIGroup = 0;
             m_PauseCoveredUIForm = true;
@@ -161,16 +225,11 @@ namespace GameFrameX.UI.Runtime
         /// 界面打开。
         /// </summary>
         /// <param name="userData">用户自定义数据。</param>
-        public void OnOpen(object userData)
+        public virtual void OnOpen(object userData)
         {
-            try
-            {
-                m_UIFormLogic.OnOpen(userData);
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnOpen with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
+            m_Available = true;
+            Visible = true;
+            m_UserData = userData;
         }
 
         /// <summary>
@@ -178,92 +237,51 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         /// <param name="isShutdown">是否是关闭界面管理器时触发。</param>
         /// <param name="userData">用户自定义数据。</param>
-        public void OnClose(bool isShutdown, object userData)
+        public virtual void OnClose(bool isShutdown, object userData)
         {
-            try
-            {
-                m_UIFormLogic.OnClose(isShutdown, userData);
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnClose with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
+            gameObject.SetLayerRecursively(m_OriginalLayer);
+            m_Available = false;
+            Visible = false;
         }
 
         /// <summary>
         /// 界面暂停。
         /// </summary>
-        public void OnPause()
+        public virtual void OnPause()
         {
-            try
-            {
-                m_UIFormLogic.OnPause();
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnPause with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
+            m_Available = false;
+            Visible = false;
         }
 
         /// <summary>
         /// 界面暂停恢复。
         /// </summary>
-        public void OnResume()
+        public virtual void OnResume()
         {
-            try
-            {
-                m_UIFormLogic.OnResume();
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnResume with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
+            m_Available = true;
+            Visible = true;
         }
 
         /// <summary>
         /// 界面遮挡。
         /// </summary>
-        public void OnCover()
+        public virtual void OnCover()
         {
-            try
-            {
-                m_UIFormLogic.OnCover();
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnCover with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
         }
 
         /// <summary>
         /// 界面遮挡恢复。
         /// </summary>
-        public void OnReveal()
+        public virtual void OnReveal()
         {
-            try
-            {
-                m_UIFormLogic.OnReveal();
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnReveal with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
         }
 
         /// <summary>
         /// 界面激活。
         /// </summary>
         /// <param name="userData">用户自定义数据。</param>
-        public void OnRefocus(object userData)
+        public virtual void OnRefocus(object userData)
         {
-            try
-            {
-                m_UIFormLogic.OnRefocus(userData);
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnRefocus with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
         }
 
         /// <summary>
@@ -271,16 +289,8 @@ namespace GameFrameX.UI.Runtime
         /// </summary>
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        public void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        public virtual void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
-            try
-            {
-                m_UIFormLogic.OnUpdate(elapseSeconds, realElapseSeconds);
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnUpdate with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
         }
 
         /// <summary>
@@ -291,14 +301,30 @@ namespace GameFrameX.UI.Runtime
         public void OnDepthChanged(int uiGroupDepth, int depthInUIGroup)
         {
             m_DepthInUIGroup = depthInUIGroup;
-            try
-            {
-                m_UIFormLogic.OnDepthChanged(uiGroupDepth, depthInUIGroup);
-            }
-            catch (Exception exception)
-            {
-                Log.Error("UI form '[{0}]{1}' OnDepthChanged with exception '{2}'.", m_SerialId, m_UIFormAssetName, exception);
-            }
         }
+
+        /// <summary>
+        /// 销毁界面.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            IsDisposed = true;
+        }
+
+        /// <summary>
+        /// 设置界面的可见性。
+        /// </summary>
+        /// <param name="visible">界面的可见性。</param>
+        protected abstract void InternalSetVisible(bool visible);
+
+        /// <summary>
+        /// 设置界面为全屏
+        /// </summary>
+        protected internal abstract void MakeFullScreen();
     }
 }

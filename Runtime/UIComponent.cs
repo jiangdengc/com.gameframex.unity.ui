@@ -374,6 +374,24 @@ namespace GameFrameX.UI.Runtime
         /// <summary>
         /// 获取界面。
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /*public IUIForm GetUIForm<T>()
+        {
+            string uiFormAssetName = typeof(T).Name;
+            var uiForms = m_UIManager.GetUIForms(uiFormAssetName);
+            UIForm[] uiFormImpls = new UIForm[uiForms.Length];
+            for (int i = 0; i < uiForms.Length; i++)
+            {
+                uiFormImpls[i] = (UIForm)uiForms[i];
+            }
+
+            return uiFormImpls;
+        }*/
+
+        /// <summary>
+        /// 获取界面。
+        /// </summary>
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="results">要获取的界面。</param>
         public void GetUIForms(string uiFormAssetName, List<UIForm> results)
@@ -484,7 +502,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="isFullScreen"></param>
         /// <returns>界面的序列编号。</returns>
-        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool isFullScreen = false) where T : UIFormLogic
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool isFullScreen = false) where T : UIForm
         {
             return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), false, null, isFullScreen);
         }
@@ -497,7 +515,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="userData"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> OpenFullScreenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null) where T : UIFormLogic
+        public async Task<T> OpenFullScreenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null) where T : UIForm
         {
             return await OpenUIFormAsync<T>(uiFormAssetPath, uiGroupName, userData, true);
         }
@@ -510,7 +528,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="isFullScreen"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> OpenUIFormAsync<T>(string uiGroupName, object userData = null, bool isFullScreen = false) where T : UIFormLogic
+        public async Task<T> OpenUIFormAsync<T>(string uiGroupName, object userData = null, bool isFullScreen = false) where T : UIForm
         {
             var uiFormAssetName = typeof(T).Name;
             var uiFormAssetPath = Utility.Asset.Path.GetUIPath(uiFormAssetName);
@@ -526,17 +544,11 @@ namespace GameFrameX.UI.Runtime
         /// <param name="isFullScreen"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> OpenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null, bool isFullScreen = false) where T : UIFormLogic
+        public async Task<T> OpenUIFormAsync<T>(string uiFormAssetPath, string uiGroupName, object userData = null, bool isFullScreen = false) where T : class, IUIForm
         {
             string uiFormAssetName = typeof(T).Name;
             var ui = await OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), false, userData, isFullScreen);
-            if (ui != null)
-            {
-                var uiFormLogic = (ui.Handle as GameObject)?.GetComponent<T>();
-                return uiFormLogic;
-            }
-
-            return null;
+            return ui as T;
         }
 
         /// <summary>
@@ -548,7 +560,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <param name="isFullScreen">是否全屏</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, bool isFullScreen = false) where T : UIFormLogic
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm, bool isFullScreen = false) where T : IUIForm
         {
             return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), pauseCoveredUIForm, null, isFullScreen);
         }
@@ -562,7 +574,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="isFullScreen">是否全屏</param>
         /// <returns>界面的序列编号。</returns>
-        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData, bool isFullScreen = false) where T : UIFormLogic
+        public Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData, bool isFullScreen = false) where T : UIForm
         {
             return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupName, typeof(T), false, userData, isFullScreen);
         }
@@ -618,7 +630,7 @@ namespace GameFrameX.UI.Runtime
         /// 该函数只适用于界面只有一个的情况.因为当找到一个目标对象之后就会立即终止
         /// </summary>
         /// <typeparam name="T">关闭界面的类型</typeparam>
-        public void CloseUIForm<T>(object userData = null) where T : IUIForm
+        public void CloseUIForm<T>(object userData = null) where T : UIForm
         {
             m_UIManager.CloseUIForm<T>(userData);
         }

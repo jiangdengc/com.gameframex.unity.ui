@@ -61,7 +61,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="isFullScreen">是否全屏</param>
-        void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<UIFormLogic> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false);
+        void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Type formType, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false);
 
         /// <summary>
         /// 界面回收。

@@ -224,7 +224,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiFormAssetName">界面资源名称。</param>
         /// <param name="uiGroupName">界面组名称。</param>
         /// <returns>界面的序列编号。</returns>
-        Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName) where T : IUIFormLogic;
+        Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName) where T : IUIForm;
 
         /// <summary>
         /// 打开界面。
@@ -234,7 +234,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="pauseCoveredUIForm">是否暂停被覆盖的界面。</param>
         /// <returns>界面的序列编号。</returns>
-        Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm) where T : IUIFormLogic;
+        Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, bool pauseCoveredUIForm) where T : IUIForm;
 
         /// <summary>
         /// 打开界面。
@@ -244,7 +244,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiGroupName">界面组名称。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>界面的序列编号。</returns>
-        Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData) where T : IUIFormLogic;
+        Task<IUIForm> OpenUIFormAsync<T>(string uiFormAssetPath, string uiFormAssetName, string uiGroupName, object userData) where T : IUIForm;
 
         /// <summary>
         /// 打开界面。

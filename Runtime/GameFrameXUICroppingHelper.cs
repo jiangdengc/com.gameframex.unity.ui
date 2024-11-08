@@ -19,7 +19,6 @@ namespace GameFrameX.UI.Runtime
                 typeof(UIComponent),
                 typeof(UIIntKey),
                 typeof(UIGroupHelperBase),
-                typeof(UIFormLogic),
                 typeof(UIFormHelperBase),
                 typeof(UIForm),
                 typeof(UIGroup),
