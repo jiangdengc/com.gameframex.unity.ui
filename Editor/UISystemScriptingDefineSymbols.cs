@@ -21,7 +21,7 @@ namespace GameFrameX.UI.Editor
         /// <summary>
         /// 开启UGUI UI脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/UI Scripting Define Symbols/Enable UGUI", false, 10)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Enable UGUI(开启UGUI适配)", false, 1000)]
         public static void DisableForceWebSocketNetwork()
         {
             ScriptingDefineSymbols.RemoveScriptingDefineSymbol(FairyGUIScriptingDefineSymbol);
@@ -31,7 +31,7 @@ namespace GameFrameX.UI.Editor
         /// <summary>
         /// 开启FairyGUI UI脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/UI Scripting Define Symbols/Enable FairyGUI", false, 11)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Enable FairyGUI(开启FairyGUI适配)", false, 1001)]
         public static void EnableForceWebSocketNetwork()
         {
             ScriptingDefineSymbols.RemoveScriptingDefineSymbol(UGUIScriptingDefineSymbol);
