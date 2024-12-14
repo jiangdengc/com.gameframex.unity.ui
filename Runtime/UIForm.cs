@@ -95,7 +95,7 @@ namespace GameFrameX.UI.Runtime
         public virtual bool Visible
         {
             get { return m_Available && m_Visible; }
-            set
+            protected set
             {
                 if (!m_Available)
                 {

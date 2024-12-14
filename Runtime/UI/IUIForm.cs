@@ -35,6 +35,16 @@ namespace GameFrameX.UI.Runtime
         object Handle { get; }
 
         /// <summary>
+        /// 获取界面是否可用。
+        /// </summary>
+        public bool Available { get; }
+
+        /// <summary>
+        /// 获取界面是否可见。
+        /// </summary>
+        public bool Visible { get; }
+
+        /// <summary>
         /// 获取界面所属的界面组。
         /// </summary>
         IUIGroup UIGroup { get; }
