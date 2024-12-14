@@ -84,6 +84,28 @@ namespace GameFrameX.UI.Runtime
             return results;
         }
 
+
+        /// <summary>
+        /// 获取已加载且正在显示的UI。
+        /// </summary>
+        /// <typeparam name="T">UI的具体类型。</typeparam>
+        /// <returns>返回已加载且正在显示的UI实例，如果未找到则返回null。</returns>
+        public T GetLoadedAndShowing<T>() where T : class, IUIForm
+        {
+            var fullName = typeof(T).FullName;
+            var uiForms = m_UIManager.GetAllLoadedUIForms();
+            foreach (var uiForm in uiForms)
+            {
+                if (uiForm.FullName == fullName && uiForm.Visible && uiForm.Available)
+                {
+                    return uiForm as T;
+                }
+            }
+
+            return null;
+        }
+
+
         /// <summary>
         /// 根据界面逻辑类型获取界面。只要找到任意的一个即返回
         /// </summary>
