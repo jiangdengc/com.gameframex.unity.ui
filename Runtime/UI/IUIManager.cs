@@ -279,7 +279,6 @@ namespace GameFrameX.UI.Runtime
         /// <param name="userData">用户自定义数据。</param>
         void CloseUIForm(int serialId, object userData);
 
-
         /// <summary>
         /// 立即关闭界面。
         /// </summary>
@@ -319,7 +318,6 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiForm">要关闭的界面。</param>
         /// <param name="userData">用户自定义数据。</param>
         void CloseUIForm(IUIForm uiForm, object userData);
-
 
         /// <summary>
         /// 立即关闭界面。
