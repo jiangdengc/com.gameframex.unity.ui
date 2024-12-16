@@ -41,12 +41,12 @@
         public static readonly UIGroupDefine Guide = new UIGroupDefine(-20, "Guide");
 
         /// <summary>
-        /// 引导
+        /// 黑板
         /// </summary>
         public static readonly UIGroupDefine BlackBoard = new UIGroupDefine(-22, "BlackBoard");
 
         /// <summary>
-        /// 引导
+        /// 对话
         /// </summary>
         public static readonly UIGroupDefine Dialogue = new UIGroupDefine(-23, "Dialogue");
 
