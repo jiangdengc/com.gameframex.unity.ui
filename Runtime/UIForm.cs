@@ -6,6 +6,8 @@
 //------------------------------------------------------------
 
 using System;
+using GameFrameX.Event.Runtime;
+using GameFrameX.Localization.Runtime;
 using GameFrameX.Runtime;
 using UnityEngine;
 
@@ -201,6 +203,8 @@ namespace GameFrameX.UI.Runtime
                 {
                     MakeFullScreen();
                 }
+
+                m_EventSubscriber.CheckSubscribe(LocalizationLanguageChangeEventArgs.EventId, OnLocalizationLanguageChanged);
             }
             catch (Exception exception)
             {
@@ -208,6 +212,11 @@ namespace GameFrameX.UI.Runtime
             }
 
             m_IsInit = true;
+        }
+
+        private void OnLocalizationLanguageChanged(object sender, GameEventArgs e)
+        {
+            UpdateLocalization();
         }
 
         /// <summary>
@@ -229,6 +238,13 @@ namespace GameFrameX.UI.Runtime
             m_Available = true;
             Visible = true;
             m_UserData = userData;
+        }
+
+        /// <summary>
+        /// 界面更新本地化。
+        /// </summary>
+        public virtual void UpdateLocalization()
+        {
         }
 
         /// <summary>
@@ -312,6 +328,7 @@ namespace GameFrameX.UI.Runtime
                 return;
             }
 
+            m_EventSubscriber.UnSubscribe(LocalizationLanguageChangeEventArgs.EventId, OnLocalizationLanguageChanged);
             IsDisposed = true;
         }
 

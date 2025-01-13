@@ -84,6 +84,11 @@ namespace GameFrameX.UI.Runtime
         void OnOpen(object userData);
 
         /// <summary>
+        /// 界面更新本地化。
+        /// </summary>
+        void UpdateLocalization();
+        
+        /// <summary>
         /// 界面关闭。
         /// </summary>
         /// <param name="isShutdown">是否是关闭界面管理器时触发。</param>
