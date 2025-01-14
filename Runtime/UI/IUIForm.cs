@@ -70,7 +70,12 @@ namespace GameFrameX.UI.Runtime
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="isFullScreen">是否全屏</param>
-        void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false);
+        void Init(int serialId, string uiFormAssetName, IUIGroup uiGroup, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false);
+
+        /// <summary>
+        /// 界面初始化。
+        /// </summary>
+        void OnInit();
 
         /// <summary>
         /// 界面回收。
@@ -87,7 +92,7 @@ namespace GameFrameX.UI.Runtime
         /// 界面更新本地化。
         /// </summary>
         void UpdateLocalization();
-        
+
         /// <summary>
         /// 界面关闭。
         /// </summary>

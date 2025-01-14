@@ -173,7 +173,7 @@ namespace GameFrameX.UI.Runtime
         /// <param name="isNewInstance">是否是新实例。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="isFullScreen">是否全屏</param>
-        public void OnInit(int serialId, string uiFormAssetName, IUIGroup uiGroup, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
+        public void Init(int serialId, string uiFormAssetName, IUIGroup uiGroup, Action<IUIForm> onInitAction, bool pauseCoveredUIForm, bool isNewInstance, object userData, bool isFullScreen = false)
         {
             if (m_IsInit)
             {
@@ -204,6 +204,7 @@ namespace GameFrameX.UI.Runtime
                     MakeFullScreen();
                 }
 
+                OnInit();
                 m_EventSubscriber.CheckSubscribe(LocalizationLanguageChangeEventArgs.EventId, OnLocalizationLanguageChanged);
             }
             catch (Exception exception)
@@ -212,6 +213,13 @@ namespace GameFrameX.UI.Runtime
             }
 
             m_IsInit = true;
+        }
+
+        /// <summary>
+        /// 初始化界面。
+        /// </summary>
+        public virtual void OnInit()
+        {
         }
 
         private void OnLocalizationLanguageChanged(object sender, GameEventArgs e)
