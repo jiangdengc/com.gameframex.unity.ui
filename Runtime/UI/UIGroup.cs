@@ -474,7 +474,11 @@ namespace GameFrameX.UI.Runtime
                 current = next;
             }
         }
-
+        /// <summary>
+        /// 获取界面组中指定资源名称的所有界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="results">要获取的界面列表。</param>
         public void InternalGetUIForms(string uiFormAssetName, List<IUIForm> results)
         {
             foreach (UIFormInfo uiFormInfo in m_UIFormInfos)
@@ -486,6 +490,29 @@ namespace GameFrameX.UI.Runtime
             }
         }
 
+        /// <summary>
+        /// 检查界面组中是否存在指定界面。
+        /// </summary>
+        /// <param name="uiFormAssetName">界面资源名称。</param>
+        /// <param name="uiForm">要检查的界面。</param>
+        /// <returns>是否存在指定界面。</returns>
+        public bool InternalHasInstanceUIForm(string uiFormAssetName, IUIForm uiForm)
+        {
+            foreach (UIFormInfo uiFormInfo in m_UIFormInfos)
+            {
+                if (uiFormInfo.UIForm.UIFormAssetName == uiFormAssetName && uiFormInfo.UIForm == uiForm)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 获取界面组中的所有界面。
+        /// </summary>
+        /// <param name="results">要获取的界面列表。</param>
         public void InternalGetAllUIForms(List<IUIForm> results)
         {
             foreach (UIFormInfo uiFormInfo in m_UIFormInfos)
