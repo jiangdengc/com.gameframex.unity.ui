@@ -113,12 +113,26 @@ namespace GameFrameX.UI.Runtime
         /// <param name="uiFormAssetPath">UI资源路径。</param>
         /// <param name="uiFormAssetName">UI资源名称。</param>
         /// <param name="uiGroupDefine">UI组定义。</param>
+        /// <param name="userData">传递给UI的用户数据。</param>
         /// <returns>返回打开的UI实例。</returns>
-        public Task<IUIForm> OpenAsync<T>(string uiFormAssetPath, string uiFormAssetName, UIGroupDefine uiGroupDefine) where T : class, IUIForm
+        public Task<IUIForm> OpenAsync<T>(string uiFormAssetPath, string uiFormAssetName, UIGroupDefine uiGroupDefine, object userData = null) where T : class, IUIForm
         {
-            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupDefine.Name, typeof(T), false, null);
+            return OpenUIFormAsync(uiFormAssetPath, uiFormAssetName, uiGroupDefine.Name, typeof(T), false, userData);
         }
 
+        /// <summary>
+        /// 异步打开UI。
+        /// </summary>
+        /// <typeparam name="T">UI的具体类型。</typeparam>
+        /// <param name="uiFormAssetPath">UI资源路径。</param>
+        /// <param name="uiGroupDefine">UI组定义。</param>
+        /// <param name="userData">传递给UI的用户数据。</param>
+        /// <returns>返回打开的UI实例。</returns>
+        public async Task<T> OpenAsync<T>(string uiFormAssetPath, UIGroupDefine uiGroupDefine, object userData = null) where T : class, IUIForm
+        {
+            return await OpenUIFormAsync<T>(uiFormAssetPath, uiGroupDefine.Name, userData, true);
+        }
+        
         /// <summary>
         /// 异步打开UI。
         /// </summary>
