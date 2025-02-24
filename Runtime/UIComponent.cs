@@ -49,11 +49,11 @@ namespace GameFrameX.UI.Runtime
 
         [SerializeField] private Transform m_InstanceRoot = null;
 
-        [SerializeField] private string m_UIFormHelperTypeName = "GameFrameX.UI.Runtime.DefaultUIFormHelper";
+        [SerializeField] private string m_UIFormHelperTypeName = "GameFrameX.UI.FairyGUI.Runtime.FairyGUIFormHelper";
 
         [SerializeField] private UIFormHelperBase m_CustomUIFormHelper = null;
 
-        [SerializeField] private string m_UIGroupHelperTypeName = "GameFrameX.UI.Runtime.DefaultUIGroupHelper";
+        [SerializeField] private string m_UIGroupHelperTypeName = "GameFrameX.UI.FairyGUI.Runtime.FairyGUIUIGroupHelper";
 
         [SerializeField] private UIGroupHelperBase m_CustomUIGroupHelper = null;
 
@@ -126,11 +126,37 @@ namespace GameFrameX.UI.Runtime
             ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(IUIManager);
             base.Awake();
+            var namespaceName = ImplementationComponentType.Namespace;
+
+#if ENABLE_UI_FAIRYGUI
+            if (!namespaceName.StartsWithFast("GameFrameX.UI.FairyGUI.Runtime"))
+            {
+                Debug.LogError("UI组件的 ComponentType 设置错误。请设置和 UI 系统一致的组件.");
+                return;
+            }
+#elif ENABLE_UI_UGUI
+            if (!namespaceName.StartsWithFast("GameFrameX.UI.UGUI.Runtime"))
+            {
+                Debug.LogError("UI组件的 ComponentType 设置错误。请设置和 UI 系统一致的组件.");
+                return;
+            }
+#endif
+            if (!m_UIFormHelperTypeName.StartsWithFast(namespaceName))
+            {
+                Debug.LogError("UI组件的 UI Form Helper 设置错误。请设置和 ComponentType 类型 一致.");
+                return;
+            }
+
+            if (!m_UIGroupHelperTypeName.StartsWithFast(namespaceName))
+            {
+                Debug.LogError("UI组件的 UI Group Helper 设置错误。请设置和 ComponentType 类型 一致.");
+                return;
+            }
 
             m_UIManager = GameFrameworkEntry.GetModule<IUIManager>();
             if (m_UIManager == null)
             {
-                Log.Fatal("UI manager is invalid.");
+                Debug.LogError("UI manager is invalid.");
                 return;
             }
 
