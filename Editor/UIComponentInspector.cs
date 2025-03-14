@@ -25,7 +25,8 @@ namespace GameFrameX.UI.Editor
         private SerializedProperty m_InstanceCapacity = null;
         private SerializedProperty m_InstanceExpireTime = null;
         // private SerializedProperty m_InstancePriority = null;
-        private SerializedProperty m_InstanceRoot = null;
+        private SerializedProperty m_InstanceUGUIRoot = null;
+        private SerializedProperty m_InstanceFairyGUIRoot = null;
         private SerializedProperty m_UIGroups = null;
 
         private HelperInfo<UIFormHelperBase> m_UIFormHelperInfo = new HelperInfo<UIFormHelperBase>("UIForm");
@@ -104,8 +105,10 @@ namespace GameFrameX.UI.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
-                EditorGUILayout.HelpBox("如果使用UGUI.一定要设置为UGUI的根节点", MessageType.Warning);
-                EditorGUILayout.PropertyField(m_InstanceRoot);
+                EditorGUILayout.HelpBox("设置为UGUI的根节点", MessageType.Warning);
+                EditorGUILayout.PropertyField(m_InstanceUGUIRoot);
+                EditorGUILayout.HelpBox("设置为FairyGUI的根节点", MessageType.Warning);
+                EditorGUILayout.PropertyField(m_InstanceFairyGUIRoot);
                 m_UIFormHelperInfo.Draw();
                 m_UIGroupHelperInfo.Draw();
                 if (m_UIGroups.arraySize <= 0)
@@ -146,7 +149,8 @@ namespace GameFrameX.UI.Editor
             m_InstanceCapacity = serializedObject.FindProperty("m_InstanceCapacity");
             m_InstanceExpireTime = serializedObject.FindProperty("m_InstanceExpireTime");
             // m_InstancePriority = serializedObject.FindProperty("m_InstancePriority");
-            m_InstanceRoot = serializedObject.FindProperty("m_InstanceRoot");
+            m_InstanceUGUIRoot = serializedObject.FindProperty("m_InstanceUGUIRoot");
+            m_InstanceFairyGUIRoot = serializedObject.FindProperty("m_InstanceFairyGUIRoot");
             m_UIGroups = serializedObject.FindProperty("m_UIGroups");
 
             m_UIFormHelperInfo.Init(serializedObject);

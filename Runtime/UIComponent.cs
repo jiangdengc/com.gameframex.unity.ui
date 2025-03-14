@@ -47,7 +47,8 @@ namespace GameFrameX.UI.Runtime
 
         // [SerializeField] private int m_InstancePriority = 0;
 
-        [SerializeField] private Transform m_InstanceRoot = null;
+        [SerializeField] private Transform m_InstanceUGUIRoot = null;
+        [SerializeField] private Transform m_InstanceFairyGUIRoot = null;
 
         [SerializeField] private string m_UIFormHelperTypeName = "GameFrameX.UI.FairyGUI.Runtime.FairyGUIFormHelper";
 
@@ -134,12 +135,38 @@ namespace GameFrameX.UI.Runtime
                 Debug.LogError("UI组件的 ComponentType 设置错误。请设置和 UI 系统一致的组件.");
                 return;
             }
+
+            if (m_InstanceFairyGUIRoot == null)
+            {
+                Debug.LogError("UI组件的 FAIRY GUI Root 设置错误。请设置");
+                return;
+            }
+
+            m_InstanceFairyGUIRoot.gameObject.SetActive(true);
+            if (m_InstanceUGUIRoot != null)
+            {
+                m_InstanceUGUIRoot.gameObject.SetActive(false);
+            }
+
 #elif ENABLE_UI_UGUI
             if (!namespaceName.StartsWithFast("GameFrameX.UI.UGUI.Runtime"))
             {
                 Debug.LogError("UI组件的 ComponentType 设置错误。请设置和 UI 系统一致的组件.");
                 return;
             }
+
+            if (m_InstanceFairyGUIRoot != null)
+            {
+                m_InstanceFairyGUIRoot.gameObject.SetActive(false);
+            }
+
+            if (m_InstanceUGUIRoot == null)
+            {
+                Debug.LogError("UI组件的 UGUI Root 设置错误。请设置");
+                return;
+            }
+
+            m_InstanceUGUIRoot.gameObject.SetActive(true);
 #endif
             if (!m_UIFormHelperTypeName.StartsWithFast(namespaceName))
             {
@@ -233,16 +260,16 @@ namespace GameFrameX.UI.Runtime
             transform.localScale = Vector3.one;
 
             m_UIManager.SetUIFormHelper(uiFormHelper);
-
-            if (m_InstanceRoot == null)
+#if ENABLE_UI_UGUI
+            if (m_InstanceUGUIRoot == null)
             {
-                m_InstanceRoot = new GameObject("UI Form Instances").transform;
-                m_InstanceRoot.SetParent(gameObject.transform);
-                m_InstanceRoot.localScale = Vector3.one;
+                m_InstanceUGUIRoot = new GameObject("UI Form Instances").transform;
+                m_InstanceUGUIRoot.SetParent(gameObject.transform);
+                m_InstanceUGUIRoot.localScale = Vector3.one;
             }
 
-            m_InstanceRoot.gameObject.layer = LayerMask.NameToLayer("UI");
-
+            m_InstanceUGUIRoot.gameObject.layer = LayerMask.NameToLayer("UI");
+#endif
             for (int i = 0; i < m_UIGroups.Length; i++)
             {
                 if (!AddUIGroup(m_UIGroups[i].Name, m_UIGroups[i].Depth))

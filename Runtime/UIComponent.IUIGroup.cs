@@ -66,8 +66,11 @@ namespace GameFrameX.UI.Runtime
                 return false;
             }
 
-            UIGroupHelperBase uiGroupHelper = (UIGroupHelperBase)m_CustomUIGroupHelper.Handler(m_InstanceRoot, uiGroupName, m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
-
+#if ENABLE_UI_FAIRYGUI
+            UIGroupHelperBase uiGroupHelper = (UIGroupHelperBase)m_CustomUIGroupHelper.Handler(m_InstanceFairyGUIRoot, uiGroupName, m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
+#else
+            UIGroupHelperBase uiGroupHelper = (UIGroupHelperBase)m_CustomUIGroupHelper.Handler(m_InstanceUGUIRoot, uiGroupName, m_UIGroupHelperTypeName, m_CustomUIGroupHelper);
+#endif
             if (uiGroupHelper == null)
             {
                 Log.Error("Can not create UI group helper.");
