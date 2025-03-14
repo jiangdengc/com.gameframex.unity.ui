@@ -23,7 +23,9 @@ namespace GameFrameX.UI.Editor
         private SerializedProperty m_EnableCloseUIFormCompleteEvent = null;
         private SerializedProperty m_InstanceAutoReleaseInterval = null;
         private SerializedProperty m_InstanceCapacity = null;
+
         private SerializedProperty m_InstanceExpireTime = null;
+
         // private SerializedProperty m_InstancePriority = null;
         private SerializedProperty m_InstanceUGUIRoot = null;
         private SerializedProperty m_InstanceFairyGUIRoot = null;
@@ -42,6 +44,11 @@ namespace GameFrameX.UI.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
+                m_UIFormHelperInfo.Draw();
+                m_UIGroupHelperInfo.Draw();
+
+                EditorGUILayout.HelpBox("以上的组件前缀的命名空间必须设置为一致，否则将会初始化失败", MessageType.Warning);
+
                 EditorGUILayout.PropertyField(m_EnableOpenUIFormSuccessEvent);
                 EditorGUILayout.PropertyField(m_EnableOpenUIFormFailureEvent);
                 // EditorGUILayout.PropertyField(m_EnableOpenUIFormUpdateEvent);
@@ -105,12 +112,11 @@ namespace GameFrameX.UI.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
-                EditorGUILayout.HelpBox("设置为UGUI的根节点", MessageType.Warning);
+                EditorGUILayout.HelpBox("设置为UGUI的根节点", MessageType.Info);
                 EditorGUILayout.PropertyField(m_InstanceUGUIRoot);
-                EditorGUILayout.HelpBox("设置为FairyGUI的根节点", MessageType.Warning);
+                EditorGUILayout.HelpBox("设置为FairyGUI的根节点", MessageType.Info);
                 EditorGUILayout.PropertyField(m_InstanceFairyGUIRoot);
-                m_UIFormHelperInfo.Draw();
-                m_UIGroupHelperInfo.Draw();
+
                 if (m_UIGroups.arraySize <= 0)
                 {
                     EditorGUILayout.HelpBox("必须要设置至少一个UIGroup", MessageType.Error);
