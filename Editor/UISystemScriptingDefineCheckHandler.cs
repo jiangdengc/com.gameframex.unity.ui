@@ -26,7 +26,7 @@ namespace GameFrameX.UI.Editor
             // 如果未定义任何UI系统的宏定义符号，则提示用户选择一个UI系统。
             if (!(hasFairyGUIScriptingDefineSymbol || hasUGUIScriptingDefineSymbol))
             {
-                // 显示对话框，提示用户选择所需的UI系统。
+                /*// 显示对话框，提示用户选择所需的UI系统。
                 var result = EditorUtility.DisplayDialog("没有检测到UI系统的宏定义存在", "请选择您所需要的UI系统,可以在菜单 GameFrameX/Scripting Define Symbols 中切换", "使用UGUI", "使用FairyGUI");
 
                 // 根据用户的选择启用相应的UI系统宏定义。
@@ -37,7 +37,13 @@ namespace GameFrameX.UI.Editor
                 else
                 {
                     UISystemScriptingDefineSymbols.EnableFairyGUISystem();
-                }
+                }*/
+
+                // 显示对话框，提示用户选择所需的UI系统。
+                EditorUtility.DisplayDialog("没有检测到UI系统的宏定义存在", "将自动启用FairyGUI的UI系统,可以在菜单 GameFrameX/Scripting Define Symbols 中切换", "我知道了");
+
+                // 选择启用相应的UI系统宏定义。
+                UISystemScriptingDefineSymbols.EnableFairyGUISystem();
             }
         }
     }
